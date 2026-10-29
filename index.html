@@ -155,6 +155,12 @@ nav.tabs button.on svg{filter:drop-shadow(0 0 6px var(--brand))}
 .note{font-size:12px;color:var(--muted);margin-top:28px;line-height:1.5}
 @media (max-width:420px){.count{font-size:46px}.bigdate .dn{font-size:54px}}
 @media (prefers-reduced-motion:no-preference){.view.on{animation:in .25s ease}@keyframes in{from{opacity:.4;transform:translateY(6px)}}}
+
+#login{position:fixed;inset:0;z-index:90;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px}
+.login-card{width:100%;max-width:380px}
+.login-card .brand{margin-bottom:6px}
+.li-err{color:var(--red);font-size:13px;margin:0;min-height:1.2em}
+.linkbtn{background:none;border:0;padding:0;cursor:pointer;font:inherit;font-size:13px;color:var(--brand);text-decoration:underline}
 </style>
 
 <svg class="beams" viewBox="0 0 400 800" preserveAspectRatio="xMidYMin slice" aria-hidden="true"><defs><linearGradient id="bgb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A77BFF" stop-opacity=".16"/><stop offset=".75" stop-color="#A77BFF" stop-opacity="0"/></linearGradient></defs><polygon points="48,-10 72,-10 430,640 290,700" fill="url(#bgb)"/><polygon points="328,-10 352,-10 110,700 -30,640" fill="url(#bgb)"/></svg>
@@ -171,6 +177,17 @@ nav.tabs button.on svg{filter:drop-shadow(0 0 6px var(--brand))}
 <text id="spUS" x="215" y="100" font-family="Unbounded,sans-serif" font-weight="900" font-size="80" letter-spacing="-1" fill="#F4F2FA" opacity="0">US</text>
 <text id="spSub" x="182" y="134" text-anchor="middle" font-family="Manrope,sans-serif" font-weight="600" font-size="12" letter-spacing="6" fill="#CFC8E6" opacity="0">EVENTS</text>
 </g></svg></div>
+
+<div id="login" hidden><form id="loginForm" class="login-card" autocomplete="on">
+  <div id="loginBrand"></div>
+  <h2>Accedi</h2>
+  <p style="margin:0;color:var(--muted);font-size:14px">Usa l'account che ti ha creato il responsabile dello staff.</p>
+  <div class="field"><label class="l" for="li-email">Email</label><input id="li-email" type="email" autocomplete="username" required></div>
+  <div class="field"><label class="l" for="li-pass">Password</label><input id="li-pass" type="password" autocomplete="current-password" required></div>
+  <p id="li-err" class="li-err" role="alert"></p>
+  <button class="btn" type="submit" id="li-btn">Accedi</button>
+  <button type="button" class="linkbtn" id="li-reset">Password dimenticata?</button>
+</form></div>
 
 <div class="wrap">
   <header class="top">
@@ -249,7 +266,7 @@ nav.tabs button.on svg{filter:drop-shadow(0 0 6px var(--brand))}
     <datalist id="roles"></datalist>
   </section>
 
-  <p class="note">Prototipo: i dati restano salvati solo su questo dispositivo. Il collegamento al calendario arriva nel prossimo passo.</p>
+  <p class="note" id="note">Prototipo: i dati restano salvati solo su questo dispositivo. Il collegamento al calendario arriva nel prossimo passo.</p>
 </div>
 
 <nav class="tabs"><div class="in">
@@ -278,7 +295,7 @@ const SEED={events:[
  {id:1,name:"App Nexus",tasks:[{t:"Definire sezioni dell'app",d:true},{t:"Collegare il calendario",d:false,due:"2026-10-28"},{t:"Aggiungere checklist materiale",d:false}]},
  {id:2,name:"Preparazione Verona",tasks:[{t:"Caricare furgone",d:false,due:"2026-10-23"},{t:"Controllare cavi DMX",d:false,due:"2026-10-23"}]}]};
 let S;try{S=JSON.parse(localStorage.getItem("nexus"))||SEED}catch(e){S=structuredClone(SEED)}
-const save=()=>{try{localStorage.setItem("nexus",JSON.stringify(S))}catch(e){}};
+const save=()=>{try{localStorage.setItem("nexus",JSON.stringify(S))}catch(e){};if(window.cloudSave)window.cloudSave()};
 const $=s=>document.querySelector(s);
 const cat=id=>CATS.find(c=>c.id===id)||CATS[0];
 const MESI=["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"];
@@ -293,6 +310,7 @@ const mapUrl=p=>"https://maps.apple.com/?q="+encodeURIComponent(p);
 
 const ROLES=["Fonico","Tecnico audio","Tecnico luci","Light designer","Manovalanza","Autista"];
 if(!Array.isArray(S.staff))S.staff=[{name:"Alessandro",role:"",phone:""},{name:"Davide",role:"",phone:""}];
+S.staff.forEach(m=>{if(m.id==null)m.id="st-"+String(m.name).toLowerCase().replace(/[^a-z0-9]+/g,"-")});
 const initials=n=>String(n).split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join("");
 $("#roles").innerHTML=ROLES.map(r=>`<option value="${r}">`).join("");
 function renderStaffChips(){
@@ -311,7 +329,7 @@ function renderStaff(){
 }
 $("#staffForm").onsubmit=e=>{e.preventDefault();const name=$("#s-name").value.trim();if(!name)return;
  if(S.staff.some(m=>m.name.toLowerCase()===name.toLowerCase())){toast("C'è già un membro con questo nome");return}
- S.staff.push({name,role:$("#s-role").value.trim(),phone:$("#s-phone").value.trim()});save();e.target.reset();renderStaff();toast(name+" aggiunto allo staff")};
+ S.staff.push({id:Date.now(),name,role:$("#s-role").value.trim(),phone:$("#s-phone").value.trim()});save();e.target.reset();renderStaff();toast(name+" aggiunto allo staff")};
 $("#staffList").onclick=e=>{const r=e.target.closest(".member");if(r)openMember(+r.dataset.m)};
 $("#staffList").onkeydown=e=>{const r=e.target.closest(".member");if(r&&(e.key==="Enter"||e.key===" ")){e.preventDefault();openMember(+r.dataset.m)}};
 function openMember(i){const m=S.staff[i];if(!m)return;
@@ -484,5 +502,81 @@ renderAll();
 
 <script>
 if('serviceWorker' in navigator && location.protocol==='https:'){addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})})}
+</script>
+<script type="module">
+/* Sincronizzazione con Firebase: eventi, progetti e staff condivisi tra tutti gli account dello staff. */
+const firebaseConfig={
+  apiKey:"AIzaSyAFZbWFxVys7X_BywFg8LRlS18p5YGulvk",
+  authDomain:"nexus-fb0ce.firebaseapp.com",
+  projectId:"nexus-fb0ce",
+  storageBucket:"nexus-fb0ce.firebasestorage.app",
+  messagingSenderId:"159389510874",
+  appId:"1:159389510874:web:64eaeb47c2f8baf01489e3"
+};
+const SDK="https://www.gstatic.com/firebasejs/10.12.2/";
+const COLS=["events","projects","staff"];
+const q=s=>document.querySelector(s);
+
+async function boot(){
+  const [{initializeApp},A,F]=await Promise.all([import(SDK+"firebase-app.js"),import(SDK+"firebase-auth.js"),import(SDK+"firebase-firestore.js")]);
+  const app=initializeApp(firebaseConfig);
+  const auth=A.getAuth(app);
+  let db;try{db=F.initializeFirestore(app,{localCache:F.persistentLocalCache({tabManager:F.persistentMultipleTabManager()})})}catch(e){db=F.getFirestore(app)}
+
+  q("#loginBrand").appendChild(q("header.top .brand").cloneNode(true));
+  const err=q("#li-err");
+  const MSG={"auth/invalid-credential":"Email o password non corrette.","auth/invalid-email":"Email non valida.","auth/too-many-requests":"Troppi tentativi, riprova tra qualche minuto.","auth/network-request-failed":"Nessuna connessione."};
+  q("#loginForm").onsubmit=async e=>{e.preventDefault();err.textContent="";q("#li-btn").disabled=true;
+    try{await A.signInWithEmailAndPassword(auth,q("#li-email").value.trim(),q("#li-pass").value)}
+    catch(x){err.textContent=MSG[x.code]||"Accesso non riuscito ("+x.code+")."}
+    q("#li-btn").disabled=false};
+  q("#li-reset").onclick=async()=>{const em=q("#li-email").value.trim();if(!em){err.textContent="Scrivi prima la tua email.";return}
+    try{await A.sendPasswordResetEmail(auth,em);err.textContent="";toast("Ti ho mandato una mail per reimpostare la password")}catch(x){err.textContent=MSG[x.code]||"Invio non riuscito."}};
+
+  const clean=o=>JSON.parse(JSON.stringify(o));
+  const snap=c=>new Map((S[c]||[]).map(o=>[String(o.id),JSON.stringify(clean(o))]));
+  const byId=(a,b)=>String(a.id).localeCompare(String(b.id),undefined,{numeric:true});
+  let synced=null,unsubs=[];
+
+  window.cloudSave=()=>{
+    if(!synced||!auth.currentUser)return;
+    const batch=F.writeBatch(db);let n=0;
+    for(const c of COLS){const cur=snap(c),old=synced[c];
+      for(const [id,j] of cur)if(old.get(id)!==j){batch.set(F.doc(db,c,id),JSON.parse(j));n++}
+      for(const id of old.keys())if(!cur.has(id)){batch.delete(F.doc(db,c,id));n++}
+      synced[c]=cur}
+    if(n)batch.commit().catch(x=>{console.warn(x);toast("Modifica non salvata sul server")});
+  };
+  const keepLocal=()=>{try{localStorage.setItem("nexus",JSON.stringify(S))}catch(e){}};
+
+  A.onAuthStateChanged(auth,user=>{
+    unsubs.forEach(u=>u());unsubs=[];synced=null;
+    const note=q("#note");
+    if(!user){q("#login").hidden=false;note.textContent="Accedi per vedere i dati condivisi dello staff.";return}
+    q("#login").hidden=true;
+    note.innerHTML="";note.append("Dati condivisi con lo staff · "+user.email+" · ");
+    const out=document.createElement("button");out.className="linkbtn";out.textContent="Esci";out.onclick=()=>A.signOut(auth);note.append(out);
+
+    // Prima di tutto aspetto i dati dal server per tutte e tre le liste, poi decido:
+    // database vuoto -> ci carico i dati di questo telefono; altrimenti uso quelli del database.
+    const first={};let ready=false;
+    COLS.forEach(c=>unsubs.push(F.onSnapshot(F.collection(db,c),{includeMetadataChanges:true},sn=>{
+      const arr=sn.docs.map(d=>d.data()).sort(byId);
+      if(!ready){
+        if(sn.metadata.fromCache)return;
+        first[c]=arr;
+        if(Object.keys(first).length<COLS.length)return;
+        ready=true;
+        const empty=COLS.every(k=>first[k].length===0);
+        synced={};
+        if(empty){COLS.forEach(k=>synced[k]=new Map());window.cloudSave();toast("Dati caricati sul database condiviso");return}
+        COLS.forEach(k=>{S[k]=first[k];synced[k]=snap(k)});keepLocal();renderAll();return;
+      }
+      if(sn.metadata.hasPendingWrites&&sn.metadata.fromCache&&!sn.docChanges().length)return;
+      S[c]=arr;synced[c]=snap(c);keepLocal();renderAll();
+    },x=>{console.warn(x);toast("Accesso al database negato")})));
+  });
+}
+if(location.protocol==="https:"||location.hostname==="localhost")boot().catch(e=>console.warn("Sincronizzazione non disponibile",e));
 </script>
 </body></html>

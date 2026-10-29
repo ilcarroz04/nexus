@@ -1,6 +1,6 @@
 // NEXUS Logistic — service worker: avvio immediato e funzionamento offline.
 // Quando pubblichi una nuova versione dell'app, cambia il numero qui sotto.
-const VERSION = 'nexus-v1';
+const VERSION = 'nexus-v2';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png'];
 
 self.addEventListener('install', (e) => {
@@ -15,7 +15,7 @@ self.addEventListener('fetch', (e) => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   const sameOrigin = url.origin === self.location.origin;
-  const fonts = url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com';
+  const fonts = url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com' || (url.hostname === 'www.gstatic.com' && url.pathname.startsWith('/firebasejs/'));
   if (!sameOrigin && !fonts) return;
   e.respondWith(caches.open(VERSION).then(async (cache) => {
     const cached = await cache.match(req, { ignoreSearch: sameOrigin });
