@@ -1,0 +1,488 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#0C0B12;color:#F4F2FA}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0C0B12">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NEXUS">
+<title>Nexus Logistic</title>
+</head><body>
+<title>Nexus Logistic</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800;900&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: app a tab con barra in basso; palco buio, colori come gelatine luci */
+:root{
+  --bg:#0C0B12; --panel:#13121b; --panel2:#1a1824; --line:#25222f;
+  --fg:#F4F2FA; --muted:#8f8aa3; --brand:#A77BFF;
+  --cyan:#3ff0ff; --magenta:#ff3fb4; --amber:#ffb23f; --violet:#9a7bff; --lime:#8dff6a; --red:#ff5a5a;
+  --f-display:"Unbounded",system-ui,sans-serif;
+  --f-body:"Manrope",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;
+}
+.beams{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1}
+#splash{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer}
+#splash svg{width:min(86vw,440px);height:auto;overflow:visible}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:720px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 120px}
+header.top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:22px}
+.brand{display:flex;align-items:baseline;gap:2px;font-family:var(--f-display);font-weight:900;font-size:30px;line-height:1;color:var(--fg);letter-spacing:-.01em}
+.brand svg{width:23px;height:25px;flex:none}
+.sub{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:6px;white-space:nowrap}
+.today{font-family:var(--f-mono);font-size:13px;color:var(--muted);text-align:right;letter-spacing:.08em}
+.today b{display:block;color:var(--fg);font-family:var(--f-display);font-weight:700;font-size:21px;letter-spacing:0;line-height:1.1;margin-bottom:3px;white-space:nowrap}
+@media (max-width:380px){.today b{font-size:18px}}
+h2{font-family:var(--f-display);font-weight:700;font-size:18px;margin:0;text-wrap:balance}
+.sec-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:26px 0 12px}
+.label{font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.view{display:none}.view.on{display:block}
+
+/* prossimo evento */
+.hero{position:relative;border-radius:22px;padding:20px;background:var(--panel);border:1px solid var(--line);overflow:hidden}
+.hero::after{content:"";position:absolute;left:20px;right:20px;top:0;height:2px;border-radius:2px;background:var(--c,var(--brand));box-shadow:0 0 14px var(--c,var(--brand));pointer-events:none}
+.count{font-family:var(--f-display);font-weight:800;font-size:56px;line-height:1;color:var(--c,var(--cyan));text-shadow:0 0 24px var(--c,var(--cyan))}
+.count small{font-size:15px;font-weight:500;color:var(--muted);text-shadow:none;margin-left:6px}
+.hero h3{font-family:var(--f-display);font-size:22px;margin:14px 0 4px;font-weight:700}
+.meta{display:flex;flex-wrap:wrap;gap:8px 16px;color:var(--muted);font-size:14px;margin-top:10px}
+.meta span b{color:var(--fg);font-weight:600}
+.chip{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+  padding:4px 9px;border-radius:999px;border:1px solid color-mix(in srgb,var(--c) 55%,transparent);color:var(--c);background:color-mix(in srgb,var(--c) 10%,transparent)}
+.chip::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c)}
+.status{font-family:var(--f-mono);font-size:11px;padding:4px 9px;border-radius:999px;background:var(--panel2);color:var(--muted)}
+.status.ok{color:var(--lime)}.status.opz{color:var(--amber)}
+
+/* lista eventi */
+.list{display:flex;flex-direction:column;gap:10px}
+.ev{display:grid;grid-template-columns:58px 1fr auto;gap:14px;align-items:center;padding:14px;border-radius:16px;background:var(--panel);border:1px solid var(--line);cursor:pointer}
+.ev:hover{border-color:color-mix(in srgb,var(--c) 50%,var(--line))}
+.date{text-align:center;border-right:1px solid var(--line);padding-right:12px}
+.date .d{font-family:var(--f-display);font-size:24px;font-weight:700;color:var(--c);line-height:1}
+.date .m{font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.ev .t{font-weight:700;font-size:15px}
+.ev .s{color:var(--muted);font-size:13px;margin-top:3px;min-width:0}
+.ev .r{font-family:var(--f-mono);font-size:12px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.empty{padding:22px;border:1px dashed var(--line);border-radius:16px;color:var(--muted);text-align:center}
+
+/* calendario */
+.cal-nav{display:flex;align-items:center;gap:8px}
+.icon-btn{width:36px;height:36px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--fg);font-size:16px;cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.dow{font-family:var(--f-mono);font-size:10px;text-align:center;color:var(--muted);letter-spacing:.1em;padding-bottom:4px}
+.dow.we{color:var(--brand)}
+.day{aspect-ratio:1/1.05;max-width:100%;border-radius:12px;background:var(--panel);border:1px solid var(--line);padding:6px;display:flex;flex-direction:column;justify-content:space-between;font-variant-numeric:tabular-nums;font-size:13px;cursor:pointer;min-width:0}
+.day.out{opacity:.25}
+.day.we{background:color-mix(in srgb,var(--brand) 7%,var(--panel))}
+.day.today{border-color:var(--brand);box-shadow:0 0 0 1px var(--brand) inset}
+.day.busy{background:color-mix(in srgb,var(--c) 22%,var(--panel));border-color:color-mix(in srgb,var(--c) 70%,transparent);box-shadow:0 0 14px -4px var(--c)}
+.dots{display:flex;gap:3px;flex-wrap:wrap}.dots i{width:6px;height:6px;border-radius:50%;background:var(--c);box-shadow:0 0 6px var(--c)}
+.weekends{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.wk{font-family:var(--f-mono);font-size:12px;padding:7px 10px;border-radius:10px;border:1px solid var(--line);background:var(--panel);font-variant-numeric:tabular-nums}
+.wk.full{border-color:var(--brand);color:var(--brand)}
+.wk.free{color:var(--lime);border-color:color-mix(in srgb,var(--lime) 40%,var(--line))}
+
+/* form */
+form{display:flex;flex-direction:column;gap:14px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+input[type=date],input[type=time]{-webkit-appearance:none;appearance:none;display:block;min-height:48px;text-align:left}
+.hero-label{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--c);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.hero-label::before{content:"";width:18px;height:2px;background:var(--c);box-shadow:0 0 8px var(--c)}
+.bigdate{display:flex;align-items:flex-end;gap:14px;margin-top:16px;flex-wrap:wrap}
+.bigdate .dn{font-family:var(--f-display);font-weight:800;font-size:64px;line-height:.9;color:var(--fg)}
+.bigdate .dm{font-family:var(--f-display);font-weight:700;font-size:20px;line-height:1.1;text-transform:uppercase;color:var(--fg)}
+.bigdate .dm span{display:block;font-family:var(--f-mono);font-weight:400;font-size:12px;letter-spacing:.12em;color:var(--muted)}
+.bigdate .sep{width:1px;align-self:stretch;background:var(--line);margin:0 4px}
+.money{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.mcard{padding:16px;border-radius:16px;background:var(--panel);border:1px solid var(--line)}
+.mcard .v{font-family:var(--f-display);font-weight:700;font-size:24px;margin-top:6px;font-variant-numeric:tabular-nums}
+.mcard.main .v{color:var(--lime);text-shadow:0 0 16px rgba(141,255,106,.35)}
+.mcard .h{font-size:12px;color:var(--muted);margin-top:4px}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+label.l{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+input,select,textarea{font:inherit;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;width:100%;min-width:0}
+input:focus,select:focus,textarea:focus,button:focus-visible,.ev:focus-visible{outline:2px solid var(--brand);outline-offset:1px}
+textarea{min-height:80px;resize:vertical}
+.cats{display:flex;flex-wrap:wrap;gap:8px}
+.cats input{position:absolute;opacity:0;width:1px;height:1px}
+.cats label{cursor:pointer;padding:9px 12px;border-radius:12px;border:1px solid var(--line);background:var(--panel);font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px}
+.cats label i{width:10px;height:10px;border-radius:50%;background:var(--c)}
+.cats input:checked+label{border-color:var(--c);color:var(--c);background:color-mix(in srgb,var(--c) 12%,var(--panel));box-shadow:0 0 16px -6px var(--c)}
+.cats input:focus-visible+label{outline:2px solid var(--brand)}
+.btn{font-family:var(--f-display);font-weight:700;font-size:14px;letter-spacing:.04em;border:0;border-radius:14px;padding:15px;cursor:pointer;color:#05060a;
+  background:var(--brand);box-shadow:0 0 24px -8px var(--brand)}
+.btn.ghost{background:var(--panel);color:var(--fg);border:1px solid var(--line);box-shadow:none}
+.maplink{font-size:13px;color:var(--brand);text-decoration:none}
+
+/* todo */
+.proj{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.proj-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.proj-head b{font-family:var(--f-display);font-size:15px;font-weight:700}
+.bar{height:4px;border-radius:4px;background:var(--panel2);overflow:hidden}
+.bar span{display:block;height:100%;background:var(--brand);box-shadow:0 0 8px var(--brand)}
+.task{display:flex;align-items:center;gap:10px;font-size:14px}
+.task input{width:20px;height:20px;accent-color:var(--brand);flex:none;padding:0}
+.task.done span{text-decoration:line-through;color:var(--muted)}
+.task em{margin-left:auto;font-style:normal;font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.add{display:flex;gap:8px}.add input{padding:10px}
+.add button{flex:none;width:44px;border-radius:12px;border:1px solid var(--line);background:var(--panel2);color:var(--brand);font-size:20px;cursor:pointer}
+.projs{display:flex;flex-direction:column;gap:12px}
+.av{width:44px;height:44px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;justify-self:center;font-family:var(--f-display);font-weight:700;font-size:15px;color:var(--brand);border:1px solid color-mix(in srgb,var(--brand) 60%,transparent);background:color-mix(in srgb,var(--brand) 10%,transparent)}
+.chip-add{padding:9px 12px;border-radius:12px;border:1px dashed var(--line);background:none;color:var(--brand);font:600 13px var(--f-body);cursor:pointer}
+
+/* tab bar */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
+  background:rgba(7,8,13,.86);backdrop-filter:blur(14px);border-top:1px solid var(--line)}
+nav.tabs .in{max-width:720px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+nav.tabs button{background:none;border:0;color:var(--muted);font:600 11px var(--f-body);display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px;border-radius:12px;cursor:pointer}
+nav.tabs svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8}
+nav.tabs button.on{color:var(--brand);background:color-mix(in srgb,var(--brand) 10%,transparent)}
+nav.tabs button.on svg{filter:drop-shadow(0 0 6px var(--brand))}
+
+.sheet{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center}
+.sheet .card{width:100%;max-width:720px;background:var(--panel);border-top:1px solid var(--line);border-radius:22px 22px 0 0;
+  padding:22px max(16px,env(safe-area-inset-right,0px)) calc(22px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:12px;max-height:85%;overflow:auto}
+.kv{display:grid;grid-template-columns:110px 1fr;gap:8px 12px;font-size:14px}
+.kv dt{font-family:var(--f-mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);padding-top:2px}
+.kv dd{margin:0}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:40;background:var(--panel2);border:1px solid var(--brand);color:var(--fg);padding:10px 16px;border-radius:12px;font-size:14px}
+.note{font-size:12px;color:var(--muted);margin-top:28px;line-height:1.5}
+@media (max-width:420px){.count{font-size:46px}.bigdate .dn{font-size:54px}}
+@media (prefers-reduced-motion:no-preference){.view.on{animation:in .25s ease}@keyframes in{from{opacity:.4;transform:translateY(6px)}}}
+</style>
+
+<svg class="beams" viewBox="0 0 400 800" preserveAspectRatio="xMidYMin slice" aria-hidden="true"><defs><linearGradient id="bgb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A77BFF" stop-opacity=".16"/><stop offset=".75" stop-color="#A77BFF" stop-opacity="0"/></linearGradient></defs><polygon points="48,-10 72,-10 430,640 290,700" fill="url(#bgb)"/><polygon points="328,-10 352,-10 110,700 -30,640" fill="url(#bgb)"/></svg>
+
+<div id="splash" aria-hidden="true"><svg viewBox="0 0 360 150">
+<defs><linearGradient id="spG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A77BFF"/><stop offset="1" stop-color="#A77BFF" stop-opacity=".35"/></linearGradient><filter id="spBlur" x="-300%" y="-300%" width="700%" height="700%"><feGaussianBlur stdDeviation="5"/></filter></defs>
+<g id="spLogo">
+<text id="spNE" x="145" y="100" text-anchor="end" font-family="Unbounded,sans-serif" font-weight="900" font-size="80" letter-spacing="-1" fill="#F4F2FA" opacity="0">NE</text>
+<g transform="translate(149 39) scale(.62)">
+<polygon id="spBA" fill="url(#spG)"/><polygon id="spBB" fill="url(#spG)"/>
+<circle id="spLA" cx="17" cy="10" r="0" fill="#A77BFF" filter="url(#spBlur)"/><circle id="spLB" cx="83" cy="10" r="0" fill="#A77BFF" filter="url(#spBlur)"/>
+<rect id="spFA" x="6" y="0" width="22" height="10" rx="2" fill="#F4F2FA" opacity="0"/><rect id="spFB" x="72" y="0" width="22" height="10" rx="2" fill="#F4F2FA" opacity="0"/>
+</g>
+<text id="spUS" x="215" y="100" font-family="Unbounded,sans-serif" font-weight="900" font-size="80" letter-spacing="-1" fill="#F4F2FA" opacity="0">US</text>
+<text id="spSub" x="182" y="134" text-anchor="middle" font-family="Manrope,sans-serif" font-weight="600" font-size="12" letter-spacing="6" fill="#CFC8E6" opacity="0">EVENTS</text>
+</g></svg></div>
+
+<div class="wrap">
+  <header class="top">
+    <div><div class="brand" role="img" aria-label="NEXUS">NE<svg viewBox="0 0 100 108" aria-hidden="true"><defs><linearGradient id="hb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A77BFF"/><stop offset="1" stop-color="#A77BFF" stop-opacity=".45"/></linearGradient></defs><polygon points="11,10 23,10 100,108 66,108" fill="url(#hb)"/><polygon points="77,10 89,10 34,108 0,108" fill="url(#hb)"/><rect x="6" y="0" width="22" height="10" rx="2" fill="#F4F2FA"/><rect x="72" y="0" width="22" height="10" rx="2" fill="#F4F2FA"/></svg>US</div><div class="sub">Logistic · Sound · Lights</div></div>
+    <div class="today" id="today"></div>
+  </header>
+
+  <!-- SCADENZE -->
+  <section class="view on" id="v-home">
+    <div id="hero"></div>
+    <div class="sec-head"><h2>In arrivo</h2><span class="label" id="nextCount"></span></div>
+    <div class="list" id="upcoming"></div>
+    <div class="sec-head"><h2>Da fare questa settimana</h2></div>
+    <div class="list" id="homeTasks"></div>
+    <div class="sec-head"><h2>Compensi</h2><span class="label">solo eventi eseguiti</span></div>
+    <div class="money" id="money"></div>
+  </section>
+
+  <!-- CALENDARIO -->
+  <section class="view" id="v-cal">
+    <div class="sec-head" style="margin-top:0"><h2 id="calTitle"></h2>
+      <div class="cal-nav"><button class="icon-btn" id="prev" aria-label="Mese precedente">‹</button><button class="icon-btn" id="next" aria-label="Mese successivo">›</button></div>
+    </div>
+    <div class="grid" id="calGrid"></div>
+    <div class="sec-head"><h2>Weekend del mese</h2><span class="label">sab–dom</span></div>
+    <div class="weekends" id="weekends"></div>
+  </section>
+
+  <!-- NUOVO EVENTO -->
+  <section class="view" id="v-new">
+    <div class="sec-head" style="margin-top:0"><h2 id="formTitle">Nuovo evento</h2><button type="button" class="maplink" id="cancelEdit" style="background:none;border:0;cursor:pointer;font:inherit;font-size:13px" hidden>Annulla modifica</button></div>
+    <form id="evForm" autocomplete="off">
+      <div class="field"><label class="l" for="f-title">Nome evento</label><input id="f-title" required placeholder="Es. Festa Smash Events"></div>
+      <div class="field"><span class="l">Tipologia</span><div class="cats" id="f-cats"></div></div>
+      <div class="row">
+        <div class="field"><label class="l" for="f-date">Data</label><input id="f-date" type="date" required></div>
+        <div class="field"><label class="l" for="f-dep">Partenza</label><input id="f-dep" type="time"></div>
+      </div>
+      <div class="field"><label class="l" for="f-place">Luogo</label><input id="f-place" required placeholder="Città o indirizzo della location"><a class="maplink" id="mapPreview" href="#" target="_blank" rel="noopener" hidden>Apri in Mappe ↗</a></div>
+      <div class="row">
+        <div class="field"><label class="l" for="f-client">Cliente</label><input id="f-client" placeholder="Es. Susanta"></div>
+        <div class="field"><label class="l" for="f-status">Stato</label>
+          <select id="f-status"><option value="ok">Confermato</option><option value="opz">Opzionato</option></select></div>
+      </div>
+      <div class="row">
+        <div class="field"><label class="l" for="f-loadin">Load-in</label><input id="f-loadin" type="time"></div>
+        <div class="field"><label class="l" for="f-show">Inizio show</label><input id="f-show" type="time"></div>
+      </div>
+      <div class="field"><label class="l" for="f-pay">Compenso (€)</label><input id="f-pay" type="number" inputmode="decimal" min="0" step="10" placeholder="Es. 600"></div>
+      <div class="field"><span class="l">Staff</span><div class="cats" id="f-staff"></div></div>
+      <div class="field"><label class="l" for="f-notes">Note e materiale</label><textarea id="f-notes" placeholder="Referente in loco, materiale da caricare, parcheggio…"></textarea></div>
+      <button class="btn" type="submit" id="saveBtn">Salva evento</button>
+    </form>
+  </section>
+
+  <!-- TO DO -->
+  <section class="view" id="v-todo">
+    <div class="sec-head" style="margin-top:0"><h2>Progetti e to do</h2></div>
+    <div class="projs" id="projs"></div>
+    <div class="add" style="margin-top:14px"><input id="newProj" placeholder="Nuovo progetto…" aria-label="Nuovo progetto"><button id="addProj" aria-label="Aggiungi progetto">+</button></div>
+  </section>
+
+  <!-- STAFF -->
+  <section class="view" id="v-staff">
+    <div class="sec-head" style="margin-top:0"><h2>Staff</h2><span class="label" id="staffCount"></span></div>
+    <div class="list" id="staffList"></div>
+    <form id="staffForm" class="proj" style="margin-top:14px" autocomplete="off">
+      <b style="font-family:var(--f-display);font-size:15px">Nuovo membro</b>
+      <div class="field"><label class="l" for="s-name">Nome</label><input id="s-name" required placeholder="Es. Marco"></div>
+      <div class="row">
+        <div class="field"><label class="l" for="s-role">Ruolo</label><input id="s-role" list="roles" placeholder="Es. Fonico"></div>
+        <div class="field"><label class="l" for="s-phone">Telefono</label><input id="s-phone" type="tel" inputmode="tel" placeholder="Facoltativo"></div>
+      </div>
+      <button class="btn" type="submit">Aggiungi allo staff</button>
+    </form>
+    <datalist id="roles"></datalist>
+  </section>
+
+  <p class="note">Prototipo: i dati restano salvati solo su questo dispositivo. Il collegamento al calendario arriva nel prossimo passo.</p>
+</div>
+
+<nav class="tabs"><div class="in">
+  <button class="on" data-v="home"><svg viewBox="0 0 24 24"><path d="M12 7v5l3 2"/><circle cx="12" cy="12" r="9"/></svg>Scadenze</button>
+  <button data-v="cal"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Calendario</button>
+  <button data-v="new"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Nuovo</button>
+  <button data-v="todo"><svg viewBox="0 0 24 24"><path d="M4 7l2 2 4-4M4 17l2 2 4-4M13 7h7M13 17h7"/></svg>To do</button>
+  <button data-v="staff"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c1.9.7 3.1 2.4 3.5 5.2"/></svg>Staff</button>
+</div></nav>
+
+<div class="sheet" id="sheet" hidden><div class="card" id="sheetCard"></div></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const CATS=[
+ {id:"audio",name:"Service audio",c:"var(--cyan)"},
+ {id:"luci",name:"Service luci",c:"var(--magenta)"},
+ {id:"audioluci",name:"Service audio luci",c:"var(--violet)"},
+ {id:"tecnici",name:"Tecnici luci",c:"var(--amber)"},
+ {id:"ld",name:"Light designer",c:"var(--lime)"},
+ {id:"manov",name:"Manovalanza",c:"var(--red)"}];
+const SEED={events:[
+ {id:1,title:"Evento Susanta",cat:"luci",date:"2026-10-24",dep:"07:00",place:"Verona",client:"Susanta",status:"ok",staff:["Alessandro","Davide"],loadin:"",show:"",notes:""},
+ {id:2,title:"Smash Events",cat:"audioluci",date:"2026-10-31",dep:"10:00",place:"Vigatto",client:"Smash Events",status:"ok",staff:["Alessandro","Davide"],loadin:"",show:"",notes:""}],
+ projects:[
+ {id:1,name:"App Nexus",tasks:[{t:"Definire sezioni dell'app",d:true},{t:"Collegare il calendario",d:false,due:"2026-10-28"},{t:"Aggiungere checklist materiale",d:false}]},
+ {id:2,name:"Preparazione Verona",tasks:[{t:"Caricare furgone",d:false,due:"2026-10-23"},{t:"Controllare cavi DMX",d:false,due:"2026-10-23"}]}]};
+let S;try{S=JSON.parse(localStorage.getItem("nexus"))||SEED}catch(e){S=structuredClone(SEED)}
+const save=()=>{try{localStorage.setItem("nexus",JSON.stringify(S))}catch(e){}};
+const $=s=>document.querySelector(s);
+const cat=id=>CATS.find(c=>c.id===id)||CATS[0];
+const MESI=["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"];
+const GG=["dom","lun","mar","mer","gio","ven","sab"];
+const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+const TODAY=new Date();TODAY.setHours(0,0,0,0);
+const parse=s=>{const[y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)};
+const daysTo=s=>Math.round((parse(s)-TODAY)/864e5);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const eur=v=>(+v||0).toLocaleString("it-IT",{style:"currency",currency:"EUR",maximumFractionDigits:0});
+const mapUrl=p=>"https://maps.apple.com/?q="+encodeURIComponent(p);
+
+const ROLES=["Fonico","Tecnico audio","Tecnico luci","Light designer","Manovalanza","Autista"];
+if(!Array.isArray(S.staff))S.staff=[{name:"Alessandro",role:"",phone:""},{name:"Davide",role:"",phone:""}];
+const initials=n=>String(n).split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join("");
+$("#roles").innerHTML=ROLES.map(r=>`<option value="${r}">`).join("");
+function renderStaffChips(){
+ const sel=new Set([...document.querySelectorAll("#f-staff input:checked")].map(i=>i.value));
+ $("#f-staff").innerHTML=S.staff.map((m,i)=>`<input type="checkbox" id="st-${i}" value="${esc(m.name)}" ${sel.has(m.name)?"checked":""}><label for="st-${i}" style="--c:var(--brand)"><i></i>${esc(m.name)}</label>`).join("")+`<button type="button" class="chip-add" id="quickStaff">+ Nuovo membro</button>`;
+ $("#quickStaff").onclick=()=>{go("staff");$("#s-name").focus()};
+}
+function renderStaff(){
+ const up=S.events.filter(e=>daysTo(e.date)>=0);
+ $("#staffCount").textContent=S.staff.length+(S.staff.length===1?" membro":" membri");
+ $("#staffList").innerHTML=S.staff.map((m,i)=>{const n=up.filter(e=>(e.staff||[]).includes(m.name)).length;
+  return `<div class="ev member" tabindex="0" style="--c:var(--brand)" data-m="${i}"><div class="av">${esc(initials(m.name))}</div>
+  <div style="min-width:0"><div class="t">${esc(m.name)}</div><div class="s">${esc(m.role||"Ruolo non indicato")}${m.phone?" · "+esc(m.phone):""}</div></div>
+  <div class="r">${n?n+(n===1?" evento":" eventi"):"libero"}</div></div>`}).join("")||`<div class="empty">Nessun membro. Aggiungine uno qui sotto.</div>`;
+ renderStaffChips();
+}
+$("#staffForm").onsubmit=e=>{e.preventDefault();const name=$("#s-name").value.trim();if(!name)return;
+ if(S.staff.some(m=>m.name.toLowerCase()===name.toLowerCase())){toast("C'è già un membro con questo nome");return}
+ S.staff.push({name,role:$("#s-role").value.trim(),phone:$("#s-phone").value.trim()});save();e.target.reset();renderStaff();toast(name+" aggiunto allo staff")};
+$("#staffList").onclick=e=>{const r=e.target.closest(".member");if(r)openMember(+r.dataset.m)};
+$("#staffList").onkeydown=e=>{const r=e.target.closest(".member");if(r&&(e.key==="Enter"||e.key===" ")){e.preventDefault();openMember(+r.dataset.m)}};
+function openMember(i){const m=S.staff[i];if(!m)return;
+ const evs=S.events.filter(e=>daysTo(e.date)>=0&&(e.staff||[]).includes(m.name)).sort((a,b)=>a.date.localeCompare(b.date));
+ $("#sheetCard").innerHTML=`<div style="display:flex;align-items:center;gap:12px"><div class="av">${esc(initials(m.name))}</div><h2>${esc(m.name)}</h2></div>
+ <div class="field"><label class="l" for="m-name">Nome</label><input id="m-name" value="${esc(m.name)}"></div>
+ <div class="row"><div class="field"><label class="l" for="m-role">Ruolo</label><input id="m-role" list="roles" value="${esc(m.role)}"></div>
+ <div class="field"><label class="l" for="m-phone">Telefono</label><input id="m-phone" type="tel" inputmode="tel" value="${esc(m.phone)}"></div></div>
+ ${m.phone?`<a class="maplink" href="tel:${esc(m.phone.replace(/\s+/g,""))}">Chiama ${esc(m.phone)}</a>`:""}
+ <div class="label" style="margin-top:6px">Prossimi eventi</div>
+ ${evs.length?`<div class="list">${evs.map(evRow).join("")}</div>`:`<div class="empty">Nessun evento in programma.</div>`}
+ <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn ghost" id="delM" style="flex:1">Rimuovi</button><button class="btn ghost" id="closeM" style="flex:1">Chiudi</button><button class="btn" id="saveM" style="flex:1">Salva</button></div>`;
+ $("#sheet").hidden=false;
+ $("#closeM").onclick=()=>$("#sheet").hidden=true;
+ $("#saveM").onclick=()=>{const nn=$("#m-name").value.trim();if(!nn)return;
+  if(nn.toLowerCase()!==m.name.toLowerCase()&&S.staff.some(x=>x.name.toLowerCase()===nn.toLowerCase())){toast("Nome già presente");return}
+  if(nn!==m.name)S.events.forEach(ev=>{if(ev.staff)ev.staff=ev.staff.map(s=>s===m.name?nn:s)});
+  Object.assign(m,{name:nn,role:$("#m-role").value.trim(),phone:$("#m-phone").value.trim()});save();$("#sheet").hidden=true;renderAll();toast("Salvato")};
+ $("#delM").onclick=function(){if(this.dataset.c){S.staff.splice(i,1);save();$("#sheet").hidden=true;renderAll();toast("Membro rimosso")}else{this.dataset.c=1;this.textContent="Tocca per confermare"}};
+}
+$("#today").innerHTML=`<b>${GG[TODAY.getDay()]} ${TODAY.getDate()} ${MESI[TODAY.getMonth()]}</b>${TODAY.getFullYear()}`;
+
+function evRow(e){const c=cat(e.cat),d=parse(e.date),n=daysTo(e.date);
+ return `<div class="ev" tabindex="0" style="--c:${c.c}" data-id="${e.id}"><div class="date"><div class="d">${d.getDate()}</div><div class="m">${MESI[d.getMonth()].slice(0,3)} · ${GG[d.getDay()]}</div></div>
+ <div style="min-width:0"><div class="t">${esc(e.title)}</div><div class="s">${esc(e.place)} · ${c.name}</div></div>
+ <div class="r">${e.dep?"⟶ "+e.dep:""}<br>${n===0?"oggi":n===1?"domani":"tra "+n+" gg"}</div></div>`}
+
+function renderHome(){
+ const up=S.events.filter(e=>daysTo(e.date)>=0).sort((a,b)=>a.date.localeCompare(b.date));
+ if(!up.length){$("#hero").innerHTML=`<div class="empty">Nessun evento in programma. Aggiungine uno dalla scheda Nuovo.</div>`}
+ else{const e=up[0],c=cat(e.cat),n=daysTo(e.date),d=parse(e.date);
+  $("#hero").innerHTML=`<div class="hero" style="--c:${c.c}">
+   <div class="hero-label">Prossimo evento</div>
+   <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><span class="chip" style="--c:${c.c}">${c.name}</span><span class="status ${e.status}">${e.status==="ok"?"Confermato":"Opzionato"}</span></div>
+   <div class="bigdate"><div class="dn">${d.getDate()}</div><div class="dm"><span>${["domenica","lunedì","martedì","mercoledì","giovedì","venerdì","sabato"][d.getDay()]}</span>${MESI[d.getMonth()]}</div><div class="sep"></div><div class="count">${n===0?"OGGI":n}${n>0?`<small>${n===1?"giorno":"giorni"}</small>`:""}</div></div>
+   <h3>${esc(e.title)}</h3>
+   <div class="meta"><span>📍 <b>${esc(e.place)}</b></span>${e.pay?`<span>Compenso <b>${eur(e.pay)}</b></span>`:""}${e.dep?`<span>Partenza <b>${e.dep}</b></span>`:""}${e.staff?.length?`<span>Staff <b>${e.staff.join(", ")}</b></span>`:""}</div>
+   <div style="margin-top:14px"><a class="maplink" href="${mapUrl(e.place)}" target="_blank" rel="noopener">Apri ${esc(e.place)} in Mappe ↗</a></div></div>`}
+ $("#upcoming").innerHTML=up.slice(1).map(evRow).join("")||`<div class="empty">Dopo questo, calendario libero.</div>`;
+ $("#nextCount").textContent=up.length+" in programma";
+ const done=S.events.filter(e=>daysTo(e.date)<0),sum=a=>a.reduce((t,e)=>t+(+e.pay||0),0);
+ const mon=done.filter(e=>parse(e.date).getMonth()===TODAY.getMonth()&&parse(e.date).getFullYear()===TODAY.getFullYear());
+ $("#money").innerHTML=`<div class="mcard main"><div class="label">Totale eseguiti</div><div class="v">${eur(sum(done))}</div><div class="h">${done.length} eventi</div></div>
+ <div class="mcard"><div class="label">${MESI[TODAY.getMonth()]}</div><div class="v">${eur(sum(mon))}</div><div class="h">In programma: ${eur(sum(up))}</div></div>`;
+ const lim=new Date(TODAY);lim.setDate(lim.getDate()+7);
+ const ts=[];S.projects.forEach(p=>p.tasks.forEach(t=>{if(!t.d&&t.due&&parse(t.due)<=lim)ts.push({...t,p:p.name})}));
+ ts.sort((a,b)=>a.due.localeCompare(b.due));
+ $("#homeTasks").innerHTML=ts.map(t=>`<div class="ev" style="--c:var(--amber);grid-template-columns:1fr auto;cursor:default"><div><div class="t">${esc(t.t)}</div><div class="s">${esc(t.p)}</div></div><div class="r">${daysTo(t.due)<=0?"oggi":parse(t.due).getDate()+" "+MESI[parse(t.due).getMonth()].slice(0,3)}</div></div>`).join("")||`<div class="empty">Nessuna scadenza nei prossimi 7 giorni.</div>`;
+}
+
+let calM=new Date(TODAY.getFullYear(),TODAY.getMonth(),1);
+function renderCal(){
+ $("#calTitle").textContent=MESI[calM.getMonth()][0].toUpperCase()+MESI[calM.getMonth()].slice(1)+" "+calM.getFullYear();
+ const start=new Date(calM);start.setDate(1-((calM.getDay()+6)%7));
+ let h=["lun","mar","mer","gio","ven","sab","dom"].map((d,i)=>`<div class="dow ${i>4?"we":""}">${d}</div>`).join("");
+ for(let i=0;i<42;i++){const d=new Date(start);d.setDate(start.getDate()+i);
+  if(i>=35&&d.getMonth()!==calM.getMonth())break;
+  const evs=S.events.filter(e=>e.date===iso(d)),we=d.getDay()===0||d.getDay()===6;
+  const c=evs[0]?cat(evs[0].cat).c:"";
+  h+=`<div class="day ${d.getMonth()!==calM.getMonth()?"out":""} ${we?"we":""} ${iso(d)===iso(TODAY)?"today":""} ${evs.length?"busy":""}" style="${c?"--c:"+c:""}" data-date="${iso(d)}">
+   <span>${d.getDate()}</span><span class="dots">${evs.map(e=>`<i style="--c:${cat(e.cat).c}"></i>`).join("")}</span></div>`}
+ $("#calGrid").innerHTML=h;
+ let w="";const d=new Date(calM);
+ while(d.getMonth()===calM.getMonth()){if(d.getDay()===6){const sun=new Date(d);sun.setDate(d.getDate()+1);
+   const n=S.events.filter(e=>e.date===iso(d)||e.date===iso(sun)).length;
+   w+=`<span class="wk ${n?"full":"free"}">${d.getDate()}–${sun.getDate()} ${n?"● "+n+" ev.":"libero"}</span>`}d.setDate(d.getDate()+1)}
+ $("#weekends").innerHTML=w;
+}
+$("#prev").onclick=()=>{calM.setMonth(calM.getMonth()-1);renderCal()};
+$("#next").onclick=()=>{calM.setMonth(calM.getMonth()+1);renderCal()};
+$("#calGrid").onclick=e=>{const d=e.target.closest(".day");if(!d)return;const ev=S.events.find(x=>x.date===d.dataset.date);
+ if(ev)openEv(ev.id);else{go("new");$("#f-date").value=d.dataset.date}};
+
+function openEv(id){const e=S.events.find(x=>x.id==id);if(!e)return;const c=cat(e.cat),d=parse(e.date);
+ $("#sheetCard").innerHTML=`<span class="chip" style="--c:${c.c};align-self:flex-start">${c.name}</span><h2>${esc(e.title)}</h2>
+ <dl class="kv"><dt>Data</dt><dd>${GG[d.getDay()]} ${d.getDate()} ${MESI[d.getMonth()]} ${d.getFullYear()}</dd><dt>Luogo</dt><dd>${esc(e.place)} · <a class="maplink" href="${mapUrl(e.place)}" target="_blank" rel="noopener">Mappe ↗</a></dd>
+ <dt>Cliente</dt><dd>${esc(e.client)||"—"}</dd><dt>Partenza</dt><dd>${e.dep||"—"}</dd><dt>Load-in</dt><dd>${e.loadin||"—"}</dd><dt>Show</dt><dd>${e.show||"—"}</dd>
+ <dt>Staff</dt><dd>${e.staff?.join(", ")||"—"}</dd><dt>Compenso</dt><dd>${e.pay?eur(e.pay):"—"}</dd><dt>Stato</dt><dd>${e.status==="ok"?"Confermato":"Opzionato"}</dd><dt>Note</dt><dd>${esc(e.notes)||"—"}</dd></dl>
+ <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn ghost" id="delEv" style="flex:1">Elimina</button><button class="btn ghost" id="editEv" style="flex:1">Modifica</button><button class="btn" id="closeS" style="flex:1">Chiudi</button></div>`;
+ $("#editEv").onclick=()=>{$("#sheet").hidden=true;startEdit(e)};
+ $("#sheet").hidden=false;
+ $("#closeS").onclick=()=>$("#sheet").hidden=true;
+ $("#delEv").onclick=function(){if(this.dataset.c){S.events=S.events.filter(x=>x.id!=id);save();$("#sheet").hidden=true;renderAll();toast("Evento eliminato")}else{this.dataset.c=1;this.textContent="Tocca per confermare"}};
+}
+$("#sheet").onclick=e=>{if(e.target.id==="sheet")$("#sheet").hidden=true};
+document.addEventListener("click",e=>{const r=e.target.closest(".ev[data-id]");if(r&&!e.target.closest("a"))openEv(r.dataset.id)});
+
+$("#f-cats").innerHTML=CATS.map((c,i)=>`<input type="radio" name="cat" id="cat-${c.id}" value="${c.id}" ${i===0?"checked":""}><label for="cat-${c.id}" style="--c:${c.c}"><i></i>${c.name}</label>`).join("");
+$("#f-place").oninput=e=>{const v=e.target.value.trim();$("#mapPreview").hidden=!v;$("#mapPreview").href=mapUrl(v)};
+let editId=null;
+function startEdit(ev){editId=ev.id;go("new");
+ const set=(k,v)=>$("#f-"+k).value=v??"";
+ set("title",ev.title);set("date",ev.date);set("dep",ev.dep);set("place",ev.place);set("client",ev.client);set("status",ev.status||"ok");
+ set("loadin",ev.loadin);set("show",ev.show);set("pay",ev.pay||"");set("notes",ev.notes);
+ const r=document.getElementById("cat-"+ev.cat);if(r)r.checked=true;
+ document.querySelectorAll("#f-staff input").forEach(i=>i.checked=(ev.staff||[]).includes(i.value));
+ $("#f-place").dispatchEvent(new Event("input"));
+ $("#formTitle").textContent="Modifica evento";$("#saveBtn").textContent="Salva modifiche";$("#cancelEdit").hidden=false}
+function resetForm(){editId=null;$("#evForm").reset();$("#mapPreview").hidden=true;
+ $("#formTitle").textContent="Nuovo evento";$("#saveBtn").textContent="Salva evento";$("#cancelEdit").hidden=true}
+$("#cancelEdit").onclick=()=>{resetForm();go("home")};
+$("#evForm").onsubmit=e=>{e.preventDefault();
+ const data={title:$("#f-title").value.trim(),cat:document.querySelector("[name=cat]:checked").value,date:$("#f-date").value,dep:$("#f-dep").value,
+  place:$("#f-place").value.trim(),client:$("#f-client").value.trim(),status:$("#f-status").value,loadin:$("#f-loadin").value,show:$("#f-show").value,
+  staff:[...document.querySelectorAll("#f-staff input:checked")].map(i=>i.value),notes:$("#f-notes").value.trim(),pay:+$("#f-pay").value||0};
+ const wasEdit=editId!==null;
+ if(wasEdit){const i=S.events.findIndex(x=>x.id==editId);if(i>-1)S.events[i]={...S.events[i],...data}}
+ else S.events.push({id:Date.now(),...data});
+ save();resetForm();renderAll();toast(wasEdit?"Modifiche salvate":"Evento salvato");go("home")};
+
+function renderTodo(){
+ $("#projs").innerHTML=S.projects.map(p=>{const done=p.tasks.filter(t=>t.d).length,pct=p.tasks.length?done/p.tasks.length*100:0;
+  return `<div class="proj" data-p="${p.id}"><div class="proj-head"><b>${esc(p.name)}</b><span class="label">${done}/${p.tasks.length}</span></div>
+  <div class="bar"><span style="width:${pct}%"></span></div>
+  ${p.tasks.map((t,i)=>`<label class="task ${t.d?"done":""}"><input type="checkbox" data-i="${i}" ${t.d?"checked":""}><span>${esc(t.t)}</span>${t.due?`<em>${parse(t.due).getDate()} ${MESI[parse(t.due).getMonth()].slice(0,3)}</em>`:""}</label>`).join("")}
+  <div class="add"><input placeholder="Aggiungi attività…" aria-label="Nuova attività in ${esc(p.name)}"><input type="date" style="max-width:150px" aria-label="Scadenza"><button aria-label="Aggiungi">+</button></div></div>`}).join("");
+}
+$("#projs").addEventListener("change",e=>{if(e.target.dataset.i===undefined)return;const p=S.projects.find(x=>x.id==e.target.closest(".proj").dataset.p);
+ p.tasks[e.target.dataset.i].d=e.target.checked;save();renderTodo();renderHome()});
+$("#projs").addEventListener("click",e=>{if(e.target.tagName!=="BUTTON")return;const box=e.target.closest(".proj"),ins=box.querySelectorAll(".add input");
+ if(!ins[0].value.trim())return;S.projects.find(x=>x.id==box.dataset.p).tasks.push({t:ins[0].value.trim(),d:false,due:ins[1].value||""});save();renderTodo();renderHome()});
+$("#addProj").onclick=()=>{const v=$("#newProj").value.trim();if(!v)return;S.projects.push({id:Date.now(),name:v,tasks:[]});$("#newProj").value="";save();renderTodo()};
+
+function go(v){document.querySelectorAll(".view").forEach(x=>x.classList.toggle("on",x.id==="v-"+v));
+ document.querySelectorAll("nav.tabs button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));window.scrollTo(0,0)}
+document.querySelectorAll("nav.tabs button").forEach(b=>b.onclick=()=>{if(b.dataset.v==="new"&&editId!==null)resetForm();go(b.dataset.v)});
+function toast(t){const el=$("#toast");el.textContent=t;el.hidden=false;clearTimeout(el._t);el._t=setTimeout(()=>el.hidden=true,1800)}
+function renderAll(){renderHome();renderCal();renderTodo();renderStaff()}
+renderAll();
+</script>
+<script>
+/* Apertura animata: logo NEXUS con i due fasci che formano la X. Tocca per saltare. */
+(function(){
+ const sp=document.getElementById('splash');if(!sp)return;
+ const q=id=>document.getElementById(id);
+ const ne=q('spNE'),us=q('spUS'),fa=q('spFA'),fb=q('spFB'),ba=q('spBA'),bb=q('spBB'),la=q('spLA'),lb=q('spLB'),sub=q('spSub'),logo=q('spLogo');
+ const cl=x=>Math.max(0,Math.min(1,x)),pr=(t,a,b)=>cl((t-a)/(b-a));
+ const oB=(x,s=2)=>x<=0?0:x>=1?1:1+(s+1)*Math.pow(x-1,3)+s*Math.pow(x-1,2);
+ const oE=x=>x<=0?0:x>=1?1:Math.pow(2,-10*x)*Math.sin((x*10-.75)*2*Math.PI/3)+1;
+ const oBo=x=>{const n=7.5625,d=1/2.75;if(x<d)return n*x*x;if(x<2*d)return n*(x-=1.5*d)*x+.75;if(x<2.5*d)return n*(x-=2.25*d)*x+.9375;return n*(x-=2.625*d)*x+.984375};
+ const beam=(el,sx0,sx1,ex0,ex1,g)=>{const y1=10+98*g;el.setAttribute('points',`${sx0},10 ${sx1},10 ${sx1+(ex1-sx1)*g},${y1} ${sx0+(ex0-sx0)*g},${y1}`)};
+ const END=2.3;
+ function frame(t){
+  const a=oB(pr(t,0,.6),2.2),b=oB(pr(t,.08,.68),2.2);
+  ne.setAttribute('transform',`translate(${-(1-a)*260} 0)`);ne.setAttribute('opacity',pr(t,0,.2));
+  us.setAttribute('transform',`translate(${(1-b)*260} 0)`);us.setAttribute('opacity',pr(t,.08,.28));
+  const d=oBo(pr(t,.2,.9)),fo=pr(t,.2,.3);
+  [fa,fb].forEach(f=>{f.setAttribute('transform',`translate(0 ${-(1-d)*90})`);f.setAttribute('opacity',fo)});
+  const g=Math.max(0,oB(pr(t,.8,1.3),1.6));
+  beam(ba,11,23,66,100,g);beam(bb,77,89,0,34,g);
+  const fl=Math.exp(-Math.pow((t-1.35)/.1,2));
+  [la,lb].forEach(l=>{l.setAttribute('r',4+22*fl);l.setAttribute('opacity',fl)});
+  const p=pr(t,1.35,2.0),s=p>0?1+.06*(1-oE(p)):1;
+  logo.setAttribute('transform',`translate(180 80) scale(${s}) translate(-180 -80)`);
+  const s2=pr(t,1.4,1.7);sub.setAttribute('opacity',s2);sub.setAttribute('transform',`translate(0 ${(1-oB(s2))*8})`);
+  sp.style.opacity=1-pr(t,1.9,END);
+ }
+ let t0=null,skip=null,done=false;
+ function finish(){if(done)return;done=true;sp.remove()}
+ function tick(now){if(t0===null)t0=now;let t=(now-t0)/1000;
+  if(skip!==null)t=Math.max(t,1.9+(now-skip)/1000*2);
+  frame(t);if(t>=END)finish();else requestAnimationFrame(tick)}
+ sp.addEventListener('click',()=>{if(skip===null)skip=performance.now()});
+ if(matchMedia('(prefers-reduced-motion: reduce)').matches){frame(1.8);setTimeout(()=>{sp.style.transition='opacity .3s';sp.style.opacity=0;setTimeout(finish,320)},700);return}
+ frame(0);
+ Promise.race([document.fonts?document.fonts.ready:Promise.resolve(),new Promise(r=>setTimeout(r,700))]).then(()=>requestAnimationFrame(tick));
+ setTimeout(finish,4500);
+})();
+</script>
+
+<script>
+if('serviceWorker' in navigator && location.protocol==='https:'){addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})})}
+</script>
+</body></html>
