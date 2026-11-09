@@ -1,6 +1,6 @@
 // NEXUS Logistic — service worker: avvio immediato e funzionamento offline.
 // Quando pubblichi una nuova versione dell'app, cambia il numero qui sotto.
-const VERSION = 'nexus-v2';
+const VERSION = 'nexus-v3';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png'];
 
 self.addEventListener('install', (e) => {
