@@ -171,16 +171,29 @@ footer{display:grid;grid-template-columns:2.32fr 1fr;gap:1rem}
 .night{position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity 4s;z-index:40}
 
 /* tablet in verticale: si impila e scorre */
+.stage{display:contents}
+.dots{display:none}
+/* tablet in verticale: tre schermate da sfogliare col dito, scorrono anche da sole */
 @media (orientation:portrait){
-  html{font-size:clamp(11px,2.3vw,26px)}
-  body{overflow:auto}
-  .app{height:auto;min-height:100%}
-  main{grid-template-columns:1fr}
-  .col.right{grid-template-rows:auto auto}
-  .cal{aspect-ratio:7/5.4}
-  footer{grid-template-columns:1fr}
+  html{font-size:clamp(11px,min(2.25vw,1.45vh),26px)}
+  .app{grid-template-rows:auto minmax(0,1fr) auto}
+  .stage{display:grid;grid-template-columns:repeat(3,100%);grid-template-rows:minmax(0,1.25fr) minmax(0,1fr) auto;column-gap:1.4rem;row-gap:1rem;
+    overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;min-height:0}
+  .stage::-webkit-scrollbar{display:none}
+  main,footer,.col.right{display:contents}
+  .stage>*,.stage .panel{scroll-snap-align:start}
+  #hero{grid-column:1;grid-row:1/4}
+  #upPanel{grid-column:2;grid-row:1/3}
+  #wkPanel{grid-column:2;grid-row:3}
+  #calPanel{grid-column:3;grid-row:1}
+  #todoPanel{grid-column:3;grid-row:2}
+  #moneyPanel{grid-column:3;grid-row:3}
+  .stage.nomoney #todoPanel{grid-row:2/4}
   .wks{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .list,.todo{-webkit-mask:none;mask:none}
+  .big{font-size:9rem}
+  .dots{display:flex;justify-content:center;gap:.6rem;padding-top:.2rem}
+  .dots button{width:.7rem;height:.7rem;padding:0;border-radius:99px;border:0;background:var(--line);transition:width .3s,background .3s}
+  .dots button.on{width:2rem;background:var(--brand);box-shadow:0 0 .6rem var(--brand)}
 }
 @media (prefers-reduced-motion:reduce){.beams b,.clock .t span{animation:none}.app{transition:none}}
 </style>
@@ -196,18 +209,19 @@ footer{display:grid;grid-template-columns:2.32fr 1fr;gap:1rem}
     <div class="sync" id="sync"><div id="syncTxt">Connessione…</div><i></i></div>
   </header>
 
+  <div class="stage" id="stage">
   <main>
     <section class="panel hero" id="hero" style="--c:var(--brand)"></section>
-    <section class="panel">
+    <section class="panel" id="upPanel">
       <div class="ph"><h2>In arrivo</h2><span class="label num" id="upCount"></span></div>
       <div class="list" id="list"></div>
     </section>
     <div class="col right">
-      <section class="panel">
+      <section class="panel" id="calPanel">
         <div class="ph"><h2 id="calTitle"></h2><span class="label" id="calInfo"></span></div>
         <div class="cal" id="cal"></div>
       </section>
-      <section class="panel">
+      <section class="panel" id="todoPanel">
         <div class="ph"><h2>Da fare</h2><span class="label">prossimi 7 giorni</span></div>
         <div class="todo" id="todo"></div>
         <div class="projs" id="projs"></div>
@@ -216,7 +230,7 @@ footer{display:grid;grid-template-columns:2.32fr 1fr;gap:1rem}
   </main>
 
   <footer>
-    <section class="panel" style="padding-block:.9rem">
+    <section class="panel" id="wkPanel" style="padding-block:.9rem">
       <div class="ph"><h2>Weekend</h2><span class="label">sabato e domenica · prossime 6 settimane</span></div>
       <div class="wks" id="wks"></div>
     </section>
@@ -225,6 +239,8 @@ footer{display:grid;grid-template-columns:2.32fr 1fr;gap:1rem}
       <div class="money" id="money"></div>
     </section>
   </footer>
+  </div>
+  <div class="dots" id="dots"><button aria-label="Prossimo evento" class="on"></button><button aria-label="In arrivo e weekend"></button><button aria-label="Calendario e to do"></button></div>
 </div>
 
 <div class="login" id="login" hidden>
@@ -385,6 +401,7 @@ function renderWeekends(ev){
 function renderMoney(ev,up){
   $("#moneyPanel").hidden=!SHOW_MONEY;
   $("footer").style.gridTemplateColumns=SHOW_MONEY?"":"1fr";
+  $("#stage").classList.toggle("nomoney",!SHOW_MONEY);
   if(!SHOW_MONEY)return;
   const done=ev.filter(e=>daysTo(e.date)<0),sum=a=>a.reduce((t,e)=>t+(+e.pay||0),0);
   const mon=done.filter(e=>{const d=parse(e.date);return d.getMonth()===TODAY.getMonth()&&d.getFullYear()===TODAY.getFullYear()});
@@ -404,6 +421,19 @@ function renderAll(){
 function setSync(state,txt){const s=$("#sync");s.className="sync "+(state||"");$("#syncTxt").textContent=txt}
 
 /* Aggiornamento: orologio ogni secondo al cambio minuto, piccolo spostamento anti-stampaggio, ricarica alle 4 */
+/* Schermate in verticale: pallini, scorrimento col dito e cambio automatico ogni 20 s (pausa di 1 min dopo un tocco) */
+const stage=$("#stage"),dots=[...document.querySelectorAll("#dots button")];
+const portrait=()=>matchMedia("(orientation:portrait)").matches;
+const pageNow=()=>Math.round(stage.scrollLeft/Math.max(1,stage.clientWidth));
+const goPage=i=>stage.scrollTo({left:i*(stage.scrollWidth/3),behavior:matchMedia("(prefers-reduced-motion:reduce)").matches?"auto":"smooth"});
+stage.addEventListener("scroll",()=>{const i=Math.round(stage.scrollLeft/(stage.scrollWidth/3));dots.forEach((d,k)=>d.classList.toggle("on",k===i))},{passive:true});
+let pauseUntil=0;const pause=()=>pauseUntil=Date.now()+60000;
+["touchstart","pointerdown","wheel"].forEach(t=>stage.addEventListener(t,pause,{passive:true}));
+dots.forEach((d,i)=>d.onclick=()=>{pause();goPage(i)});
+const AUTO=+(P.get("giro")??20);
+if(AUTO>0)setInterval(()=>{if(!portrait()||Date.now()<pauseUntil)return;const i=Math.round(stage.scrollLeft/(stage.scrollWidth/3));goPage((i+1)%3)},AUTO*1000);
+addEventListener("resize",()=>{if(!portrait())stage.scrollLeft=0});
+
 let lastMin=-1;
 setInterval(()=>{const n=new Date();if(n.getMinutes()!==lastMin){lastMin=n.getMinutes();renderAll();
   if(n.getMinutes()%10===0){const x=(Math.random()*4-2).toFixed(1),y=(Math.random()*4-2).toFixed(1);$("#app").style.transform=`translate(${x}px,${y}px)`}
