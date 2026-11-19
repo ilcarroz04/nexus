@@ -2086,18 +2086,68 @@ function renderTrack(){const v=draft,box=$("#g-track");
  const lb=$("#g-lab");if(lb)lb.onclick=()=>{v.name=$("#g-name").value.trim()||v.name||"Senza nome";openLabels([v])};
 }
 
+/* --- PDF delle etichette, creato dentro l'app (A4, 3×8 da 70×37 mm) --- */
+function labelsPdf(items){
+ const mm=v=>v*72/25.4,W=595.28,H=841.89,LW=mm(70),LH=mm(37),COLS=3,ROWS=8,PER=COLS*ROWS;
+ const x0=(W-LW*COLS)/2,y0=(H-LH*ROWS)/2;
+ const enc=s=>String(s??"").normalize("NFC").replace(/[^\x20-\xff]/g,"?").replace(/[\\()]/g,"\\$&");
+ const fit=(s,max)=>{s=String(s??"");return s.length>max?s.slice(0,max-1)+"…".replace("…","..."):s};
+ const wrap=(s,max)=>{const w=String(s||"").split(/\s+/);const L=[""];for(const x of w){const t=(L[L.length-1]+" "+x).trim();if(t.length<=max)L[L.length-1]=t;else if(L.length<2)L.push(x);else{L[1]=fit(L[1]+" "+x,max);break}}return L.map(l=>fit(l,max))};
+ const pages=[];
+ for(let p=0;p<Math.max(1,Math.ceil(items.length/PER));p++){
+  let o="";
+  items.slice(p*PER,p*PER+PER).forEach((it,i)=>{
+   const col=i%COLS,row=Math.floor(i/COLS),lx=x0+col*LW,ly=H-y0-(row+1)*LH,pad=mm(3),qs=LH-pad*2;
+   let m;try{m=NXQR(codeUrl(it.c),"M")}catch(_){m=[]}
+   const n=m.length||1,ms=qs/(n+2);
+   o+="0 0 0 rg\n";
+   for(let r=0;r<n;r++){let c=0;while(c<n){if(m[r][c]){let s=c;while(c<n&&m[r][c])c++;o+=`${(lx+pad+(s+1)*ms).toFixed(2)} ${(ly+pad+qs-(r+2)*ms).toFixed(2)} ${((c-s)*ms+.05).toFixed(2)} ${(ms+.05).toFixed(2)} re\n`}else c++}}
+   o+="f\n";
+   const tx=lx+pad+qs+mm(2.5);let ty=ly+LH-pad-mm(3.2);
+   o+=`BT 0.42 0.27 0.85 rg /F1 7 Tf ${tx.toFixed(2)} ${ty.toFixed(2)} Td (NEXUS) Tj ET\n`;ty-=mm(4.6);
+   wrap(it.g.name,16).forEach(l=>{o+=`BT 0 0 0 rg /F1 9 Tf ${tx.toFixed(2)} ${ty.toFixed(2)} Td (${enc(l)}) Tj ET\n`;ty-=mm(3.7)});
+   if(it.sub){o+=`BT 0.27 0.27 0.27 rg /F2 8 Tf ${tx.toFixed(2)} ${ty.toFixed(2)} Td (${enc(fit(it.sub,19))}) Tj ET\n`}
+   o+=`BT 0 0 0 rg /F3 10 Tf ${tx.toFixed(2)} ${(ly+pad+mm(.6)).toFixed(2)} Td (${enc(it.c)}) Tj ET\n`;
+  });
+  pages.push(o);
+ }
+ const objs=[];const add=s=>{objs.push(s);return objs.length};
+ add("<< /Type /Catalog /Pages 2 0 R >>");add("PAGES");
+ const f1=add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>");
+ const f2=add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>");
+ const f3=add("<< /Type /Font /Subtype /Type1 /BaseFont /Courier-Bold /Encoding /WinAnsiEncoding >>");
+ const kids=pages.map(c=>{const s=add(`<< /Length ${c.length} >>\nstream\n${c}endstream`);return add(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /Font << /F1 ${f1} 0 R /F2 ${f2} 0 R /F3 ${f3} 0 R >> >> /Contents ${s} 0 R >>`)});
+ objs[1]=`<< /Type /Pages /Kids [${kids.map(k=>k+" 0 R").join(" ")}] /Count ${kids.length} >>`;
+ let out="%PDF-1.4\n";const off=[];
+ objs.forEach((s,i)=>{off.push(out.length);out+=`${i+1} 0 obj\n${s}\nendobj\n`});
+ const xr=out.length;out+=`xref\n0 ${objs.length+1}\n0000000000 65535 f \n`+off.map(x=>String(x).padStart(10,"0")+" 00000 n \n").join("");
+ out+=`trailer\n<< /Size ${objs.length+1} /Root 1 0 R >>\nstartxref\n${xr}\n%%EOF`;
+ const b=new Uint8Array(out.length);for(let i=0;i<out.length;i++)b[i]=out.charCodeAt(i)&255;
+ return new Blob([b],{type:"application/pdf"});
+}
+async function shareLabels(items){
+ if(!items.length){toast("Nessun codice da esportare");return}
+ const name="NEXUS-etichette-"+iso(new Date())+".pdf";
+ let blob;try{blob=labelsPdf(items)}catch(e){console.warn(e);toast("Non riesco a creare il PDF");return}
+ const file=new File([blob],name,{type:"application/pdf"});
+ try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:"Etichette NEXUS"});return}}catch(e){if(e&&e.name==="AbortError")return}
+ const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();a.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),60000);toast("PDF pronto: si apre o finisce nei download");
+}
+
 /* --- etichette QR da stampare --- */
 let labSel="all";
 function openLabels(only){const box=$("#labels");
  const draw=()=>{const src=only||S.gear.filter(g=>labSel==="all"||gcat(g.cat).id===labSel);
-  const items=src.flatMap(g=>{normG(g);return g.track==="unit"?g.units.map(u=>({g,c:u.c,sub:u.n})):g.cases.map(k=>({g,c:k.c,sub:`${k.n} · ${k.q} pz`}))});
+  const items=src.flatMap(g=>{normG(g);return g.track==="unit"?g.units.map(u=>({g,c:u.c,sub:u.n})):g.cases.map(k=>({g,c:k.c,sub:`${k.q} pz · ${k.n}`}))});
   box.innerHTML=`<div class="lab-bar noprint"><div><h2>Etichette QR</h2><div class="label" style="margin-top:4px">${items.length} etichette · foglio A4, 3 colonne (70×37 mm)</div></div><button class="x" id="lab-x" aria-label="Chiudi">×</button></div>
    ${only?"":`<div class="fchips noprint"><button data-ls="all" class="${labSel==="all"?"on":""}" style="--c:var(--fg)">Tutto</button>${GCATS.filter(c=>S.gear.some(g=>gcat(g.cat).id===c.id)).map(c=>`<button data-ls="${c.id}" class="${labSel===c.id?"on":""}" style="--c:${c.c}"><i></i>${c.name}</button>`).join("")}</div>`}
    <div class="lab-sheet">${items.map(x=>`<div class="lab">${qrSvg(codeUrl(x.c))}<div class="lab-t"><div class="lab-b">NEXUS</div><div class="lab-n">${esc(x.g.name)}</div><div class="lab-s">${esc(x.sub||"")}</div><div class="lab-c">${esc(x.c)}</div></div></div>`).join("")||`<div class="empty">Nessun codice da stampare.</div>`}</div>
-   <div class="lab-foot noprint"><button class="btn" id="lab-print">Stampa</button><div class="label" style="text-transform:none;letter-spacing:0;line-height:1.5">Dal telefono puoi stampare o salvare in PDF. Se un'etichetta si rovina, ristampala: il codice resta lo stesso.</div></div>`;
+   <div class="lab-foot noprint"><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" id="lab-pdf" style="flex:2">Condividi o salva PDF</button><button class="btn ghost" id="lab-print" style="flex:1">Stampa</button></div><div class="label" style="text-transform:none;letter-spacing:0;line-height:1.5">Il PDF è già impaginato per fogli A4 adesivi da 3×8 (70×37 mm): dal menu di condivisione puoi stamparlo, salvarlo in File o mandarlo. Se un'etichetta si rovina, ristampala: il codice resta lo stesso.</div></div>`;
   box.hidden=false;document.body.classList.add("printing-labels");
   $("#lab-x").onclick=()=>{box.hidden=true;document.body.classList.remove("printing-labels")};
   $("#lab-print").onclick=()=>{try{window.print()}catch(_){}};
+  $("#lab-pdf").onclick=()=>shareLabels(items);
   box.querySelectorAll("[data-ls]").forEach(b=>b.onclick=()=>{labSel=b.dataset.ls;draw()});
  };draw();
 }
@@ -2328,12 +2378,16 @@ async function boot(){
 
   window.cloudSave=()=>{
     if(!synced||!auth.currentUser)return;
-    const batch=F.writeBatch(db);let n=0;
-    for(const c of COLS){const cur=snap(c),old=synced[c];
+    const batch=F.writeBatch(db);let n=0;const prev={};
+    for(const c of COLS){const cur=snap(c),old=synced[c];prev[c]=old;
       for(const [id,j] of cur)if(old.get(id)!==j){batch.set(F.doc(db,c,id),JSON.parse(j));n++}
       for(const id of old.keys())if(!cur.has(id)){batch.delete(F.doc(db,c,id));n++}
       synced[c]=cur}
-    if(n)batch.commit().catch(x=>{console.warn(x);toast("Modifica non salvata sul server")});
+    if(n)batch.commit().then(()=>{window._nxRetry=0}).catch(x=>{console.warn(x);
+      COLS.forEach(c=>{synced[c]=prev[c]});
+      const why=x&&x.code==="permission-denied"?"permesso negato dal database":x&&x.code==="invalid-argument"?"dati non validi (foto troppo grande?)":(x&&x.code)||"errore di rete";
+      toast("Modifica non salvata sul server: "+why);
+      window._nxRetry=(window._nxRetry||0)+1;if(window._nxRetry<=3)setTimeout(()=>window.cloudSave&&window.cloudSave(),5000*window._nxRetry)});
   };
   const keepLocal=()=>{try{localStorage.setItem("nexus",JSON.stringify(S))}catch(e){}};
 
