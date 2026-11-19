@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#0C0B12;color:#F4F2FA}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><link rel="manifest" href="manifest.webmanifest">
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover"><style>:root{color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#0C0B12;color:#F4F2FA}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0C0B12">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -25,6 +25,12 @@
 }
 *{box-sizing:border-box}
 html,body{height:100%}
+html{overflow-x:hidden}
+html,body{overscroll-behavior:none;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{overflow-x:clip;touch-action:manipulation}
+.wrap{overflow-x:clip}
+header.top>*{min-width:0}
+.today b{font-size:clamp(15px,4.6vw,21px)!important}
 body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;
 }
 .beams{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
@@ -106,7 +112,7 @@ input[type=date],input[type=time]{-webkit-appearance:none;appearance:none;displa
 .mcard .h{font-size:12px;color:var(--muted);margin-top:4px}
 .field{display:flex;flex-direction:column;gap:6px;min-width:0}
 label.l{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-input,select,textarea{font:inherit;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;width:100%;min-width:0}
+input,select,textarea{font:inherit;font-size:16px;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;width:100%;min-width:0}
 input:focus,select:focus,textarea:focus,button:focus-visible,.ev:focus-visible{outline:2px solid var(--brand);outline-offset:1px}
 textarea{min-height:80px;resize:vertical}
 .cats{display:flex;flex-wrap:wrap;gap:8px}
@@ -130,7 +136,7 @@ textarea{min-height:80px;resize:vertical}
 .task input{width:20px;height:20px;accent-color:var(--brand);flex:none;padding:0}
 .task.done span{text-decoration:line-through;color:var(--muted)}
 .task em{margin-left:auto;font-style:normal;font-family:var(--f-mono);font-size:11px;color:var(--muted)}
-.add{display:flex;gap:8px}.add input{padding:10px}
+.add{display:flex;gap:8px}.add input{padding:10px;font-size:16px}
 .add button{flex:none;width:44px;border-radius:12px;border:1px solid var(--line);background:var(--panel2);color:var(--brand);font-size:20px;cursor:pointer}
 .projs{display:flex;flex-direction:column;gap:12px}
 .av{width:44px;height:44px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;justify-self:center;font-family:var(--f-display);font-weight:700;font-size:15px;color:var(--brand);border:1px solid color-mix(in srgb,var(--brand) 60%,transparent);background:color-mix(in srgb,var(--brand) 10%,transparent)}
@@ -155,6 +161,163 @@ nav.tabs button.on svg{filter:drop-shadow(0 0 6px var(--brand))}
 .note{font-size:12px;color:var(--muted);margin-top:28px;line-height:1.5}
 @media (max-width:420px){.count{font-size:46px}.bigdate .dn{font-size:54px}}
 @media (prefers-reduced-motion:no-preference){.view.on{animation:in .25s ease}@keyframes in{from{opacity:.4;transform:translateY(6px)}}}
+
+
+/* magazzino */
+.gsum{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.gs{padding:14px 12px;border-radius:16px;background:var(--panel);border:1px solid var(--line);cursor:pointer;text-align:left;color:var(--fg);font:inherit;min-width:0}
+.gs .v{font-family:var(--f-display);font-weight:700;font-size:24px;margin-top:6px;font-variant-numeric:tabular-nums}
+.gs .h{font-size:11.5px;color:var(--muted);margin-top:4px;line-height:1.3}
+.gs.warn .v{color:var(--amber)}.gs.bad .v{color:var(--red)}.gs.outv .v{color:var(--brand)}
+.gs.on{border-color:var(--brand);box-shadow:0 0 0 1px var(--brand) inset}
+.gsearch{margin-top:16px}
+.fchips{display:flex;gap:8px;overflow-x:auto;padding:12px 0 2px;scrollbar-width:none}
+.fchips::-webkit-scrollbar{display:none}
+.fchips button{flex:none;padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--muted);font:600 13px var(--f-body);display:flex;gap:7px;align-items:center;cursor:pointer}
+.fchips button i{width:8px;height:8px;border-radius:50%;background:var(--c)}
+.fchips button.on{color:var(--c);border-color:var(--c);background:color-mix(in srgb,var(--c) 12%,var(--panel))}
+.gcat{display:flex;justify-content:space-between;align-items:baseline;margin:22px 0 10px}
+.gcat b{font-family:var(--f-display);font-size:15px;display:flex;align-items:center;gap:8px}
+.gcat b::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c)}
+.gi{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px;border-radius:16px;background:var(--panel);border:1px solid var(--line);cursor:pointer}
+.gi:focus-visible{outline:2px solid var(--brand)}
+.gico{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 14%,var(--panel2));color:var(--c)}
+.gico svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.gi .t{font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gi .s{color:var(--muted);font-size:12.5px;margin-top:4px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.qty{text-align:right;font-family:var(--f-display);font-weight:700;font-size:20px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.qty span{color:var(--muted);font-size:14px}
+.qty small{display:block;font-family:var(--f-mono);font-weight:400;font-size:10px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-top:3px}
+.tag{font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:999px;background:var(--panel2);color:var(--muted);white-space:nowrap}
+.tag.noleggio{color:var(--cyan)}.tag.prestito{color:var(--amber)}.tag.chk{color:var(--amber)}.tag.rep,.tag.ko,.tag.late{color:var(--red)}.tag.out{color:var(--brand)}
+.ret{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:12px 14px;border-radius:14px;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--amber);cursor:pointer}
+.ret.late{border-left-color:var(--red)}
+.ret .t{font-weight:700;font-size:14px}.ret .s{font-size:12.5px;color:var(--muted);margin-top:3px}
+.ret .r{font-family:var(--f-mono);font-size:12px;color:var(--amber);text-align:right;white-space:nowrap}
+.ret.late .r{color:var(--red)}
+.demo-note{margin-top:12px;padding:10px 12px;border-radius:12px;border:1px dashed var(--line);color:var(--muted);font-size:12.5px}
+/* materiale dell'evento */
+.gbox{display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:16px;background:var(--panel2);border:1px solid var(--line)}
+.gbox .row2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.mini{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--muted)}
+.mini b{color:var(--fg);font-family:var(--f-display);font-size:16px;font-variant-numeric:tabular-nums}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;border-radius:12px;background:var(--panel2)}
+.seg button{border:0;background:none;color:var(--muted);font:600 13px var(--f-body);padding:10px 4px;border-radius:9px;cursor:pointer}
+.seg button.on{background:var(--panel);color:var(--fg);box-shadow:0 0 0 1px var(--line)}
+.seg button em{font-style:normal;font-family:var(--f-mono);font-size:11px;color:var(--brand);margin-left:5px}
+.pick{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}
+.pick .t{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pick .s{font-size:12px;color:var(--muted);margin-top:3px}
+.pick.sel .t{color:var(--brand)}
+.pick.conf .s{color:var(--red)}
+.pick.dis{opacity:.5}
+.step{display:flex;align-items:center;gap:6px}
+.step button{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--fg);font-size:18px;cursor:pointer}
+.step b{min-width:28px;text-align:center;font-family:var(--f-display);font-variant-numeric:tabular-nums}
+.gh{font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--c);margin:18px 0 2px}
+.chk{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px 12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.chk input[type=checkbox]{width:24px;height:24px;accent-color:var(--brand);padding:0;margin:0}
+.chk .t{font-weight:600;font-size:14.5px}
+.chk .s{font-size:12px;color:var(--muted);margin-top:2px}
+.chk.done .t{color:var(--muted);text-decoration:line-through}
+.chk .q{font-family:var(--f-display);font-weight:700;font-variant-numeric:tabular-nums}
+.chk-note{grid-column:2/4;padding:9px 11px}
+.sheet-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.sheet-head .x{flex:none;width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:var(--panel2);color:var(--fg);font-size:18px;cursor:pointer}
+nav.tabs .in{grid-template-columns:repeat(6,1fr)!important;gap:2px!important}
+nav.tabs button{font-size:10px!important;padding:6px 2px!important;white-space:nowrap}
+/* foto, pezzi, cassette */
+.gico.ph{background:radial-gradient(circle at 50% 40%,color-mix(in srgb,var(--brand) 16%,var(--panel2)),var(--panel2));overflow:hidden}
+.gico.ph img{width:100%;height:100%;object-fit:contain;padding:3px}
+.gico.sm{width:36px;height:36px;border-radius:10px}.gico.sm svg{width:18px;height:18px}
+.gtop{display:grid;grid-template-columns:120px minmax(0,1fr);gap:14px;align-items:center}
+.gphoto{width:120px;height:120px;border-radius:18px;border:1px solid var(--line);background:radial-gradient(circle at 50% 40%,color-mix(in srgb,var(--brand) 18%,var(--panel2)),var(--panel2));display:grid;place-items:center;overflow:hidden}
+.gphoto img{width:100%;height:100%;object-fit:contain;padding:8px;filter:drop-shadow(0 6px 14px rgba(0,0,0,.5))}
+.gphoto svg{width:44px;height:44px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.gphoto-act{display:flex;flex-direction:column;gap:8px;align-items:flex-start;min-width:0}
+.seg.two{grid-template-columns:1fr 1fr}
+.seg.two button{display:flex;flex-direction:column;gap:3px;padding:10px 6px}
+.seg.two small{font:500 11px var(--f-body);color:var(--muted)}
+.units{display:flex;flex-direction:column;gap:6px}
+.unit{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:8px;align-items:center;padding:6px 6px 6px 10px;border-radius:12px;background:var(--panel2);border:1px solid transparent}
+.unit.hit{border-color:var(--brand);box-shadow:0 0 16px -6px var(--brand)}
+.unit .code{font-family:var(--f-mono);font-size:11px;color:var(--brand);white-space:nowrap}
+.unit input{padding:8px 10px}
+.unit select{padding:8px;width:auto;max-width:118px;font-size:13px}
+.unit .x,.pick .x{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--muted);font-size:16px;cursor:pointer}
+.step.sm button{width:32px;height:32px;font-size:16px}
+.step.sm b{min-width:24px}
+.pick{grid-template-columns:auto minmax(0,1fr) auto}
+.scanbtn{flex:none;width:50px;padding:0;display:grid;place-items:center}
+.scanbtn svg,.scanbig svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+.scanbig{display:flex;align-items:center;gap:8px;padding:14px 18px}
+.gtools{display:flex;gap:8px;margin-top:16px}
+.gtools .gsearch{margin-top:0;flex:1}
+/* verifica carico / rientro */
+.vsum{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px;border-radius:16px;background:var(--panel2);border:1px solid var(--line);margin-bottom:8px}
+.vsum .v{font-family:var(--f-display);font-weight:800;font-size:30px;margin:4px 0;font-variant-numeric:tabular-nums}
+.vsum .v span{font-size:15px;color:var(--muted);font-weight:500}
+.vsum.ok{border-color:var(--lime)}.vsum.ok .v{color:var(--lime)}
+.vr{border-bottom:1px solid var(--line);padding:4px 0 10px}
+.vhead{width:100%;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;background:none;border:0;color:var(--fg);font:inherit;padding:8px 0;cursor:pointer}
+.vhead .t{font-weight:700;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vhead .s{font-size:12px;color:var(--muted);margin-top:2px}
+.vq{font-family:var(--f-display);font-weight:700;font-size:20px;font-variant-numeric:tabular-nums}
+.vq span{font-size:13px;color:var(--muted)}
+.vr.part .vq{color:var(--amber)}.vr.ok .vq{color:var(--lime)}
+.vr.ok .bar span{background:var(--lime);box-shadow:0 0 8px var(--lime)}
+.bar.thin{height:3px}
+.vdet{display:flex;flex-direction:column;gap:10px;padding-top:10px}
+.uchips{display:flex;flex-wrap:wrap;gap:6px}
+.uchip{display:flex;flex-direction:column;align-items:flex-start;gap:1px;padding:7px 10px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--fg);font:600 13px var(--f-body);cursor:pointer}
+.uchip small{font:400 10px var(--f-mono);color:var(--muted)}
+.uchip.on{border-color:var(--lime);background:color-mix(in srgb,var(--lime) 14%,var(--panel2));color:var(--lime)}
+.uchip.miss{border-color:var(--red);color:var(--red)}
+.vman{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+/* scanner a tutto schermo */
+#scanner{position:fixed;inset:0;z-index:60;background:var(--bg);overflow:auto;display:flex;flex-direction:column;gap:12px;
+ padding:calc(14px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+#scanner .x,#labels .x{flex:none;width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--panel2);color:var(--fg);font-size:18px;cursor:pointer}
+.sc-head,.lab-bar{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.sc-video{position:relative;width:100%;max-width:520px;align-self:center;aspect-ratio:1/1;border-radius:22px;overflow:hidden;background:#000;border:1px solid var(--line)}
+.sc-video video{width:100%;height:100%;object-fit:cover;display:block}
+.sc-frame{position:absolute;inset:18%;border-radius:18px;box-shadow:0 0 0 2000px rgba(0,0,0,.35);border:2px solid var(--brand);filter:drop-shadow(0 0 10px var(--brand))}
+.sc-msg{position:absolute;inset:auto 16px 16px;padding:10px 12px;border-radius:12px;background:rgba(12,11,18,.85);color:var(--fg);font-size:13px;text-align:center}
+.sc-res{padding:14px;border-radius:16px;background:var(--panel);border:1px solid var(--line);min-height:64px}
+.sc-res .t{font-weight:800;font-size:16px}.sc-res .s{font-size:13px;color:var(--muted);margin-top:4px}
+.sc-res.ok{border-color:var(--lime)}.sc-res.ok .t{color:var(--lime)}
+.sc-res.warn{border-color:var(--amber)}.sc-res.warn .t{color:var(--amber)}
+.sc-res.bad{border-color:var(--red)}.sc-res.bad .t{color:var(--red)}
+.sc-man{display:flex;gap:8px}.sc-man input{flex:1;text-transform:uppercase;font-family:var(--f-mono)}.sc-man .btn{padding:12px 18px}
+.sc-demo{display:flex;flex-direction:column;gap:8px}
+.sc-log{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--muted)}
+.sc-log .ok::before{content:"✓ ";color:var(--lime)}.sc-log .warn::before{content:"! ";color:var(--amber)}.sc-log .bad::before{content:"× ";color:var(--red)}
+/* etichette */
+#labels{position:fixed;inset:0;z-index:70;background:var(--bg);overflow:auto;display:flex;flex-direction:column;gap:12px;
+ padding:calc(14px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.lab-sheet{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.lab{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:center;background:#fff;color:#0C0B12;border-radius:8px;padding:8px;height:110px}
+.lab svg{width:94px;height:94px;display:block}
+.lab-t{min-width:0;display:flex;flex-direction:column;gap:2px}
+.lab-b{font:900 10px var(--f-display);letter-spacing:.06em;color:#6b45d9}
+.lab-n{font:800 13px/1.15 var(--f-body);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.lab-s{font:600 11px var(--f-body);color:#444}
+.lab-c{font:600 12px var(--f-mono);margin-top:2px}
+.lab-foot{display:flex;flex-direction:column;gap:8px}
+@media print{
+ @page{size:A4;margin:10mm 4mm}
+ body.printing-labels{background:#fff!important}
+ body.printing-labels > *:not(#labels){display:none!important}
+ body.printing-labels #labels{position:static;padding:0;background:#fff;overflow:visible}
+ body.printing-labels .noprint{display:none!important}
+ .lab-sheet{grid-template-columns:repeat(3,70mm);gap:0;justify-content:center}
+ .lab{height:37mm;border-radius:0;padding:2.5mm;break-inside:avoid;gap:2.5mm}
+ .lab svg{width:30mm;height:30mm}
+}
+.pick.two{grid-template-columns:minmax(0,1fr) auto}
+
+#labels>*,#scanner>*{flex-shrink:0}
+.sc-man input::placeholder{text-transform:none;font-family:var(--f-body)}
 
 #login{position:fixed;inset:0;z-index:90;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px}
 .login-card{width:100%;max-width:380px}
@@ -250,6 +413,18 @@ nav.tabs button.on svg{filter:drop-shadow(0 0 6px var(--brand))}
     <div class="add" style="margin-top:14px"><input id="newProj" placeholder="Nuovo progetto…" aria-label="Nuovo progetto"><button id="addProj" aria-label="Aggiungi progetto">+</button></div>
   </section>
 
+  <!-- MAGAZZINO -->
+  <section class="view" id="v-gear">
+    <div class="sec-head" style="margin-top:0"><h2>Magazzino</h2><span class="label" id="gearCount"></span></div>
+    <div class="gsum" id="gsum"></div>
+    <div id="gRet"></div>
+    <div class="gtools"><input class="gsearch" id="gq" type="search" placeholder="Cerca per nome o codice…" aria-label="Cerca materiale" autocomplete="off"><button class="btn scanbtn" id="gScan" aria-label="Scansiona un QR"><svg viewBox="0 0 24 24"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M4 12h16"/></svg></button></div>
+    <div class="fchips" id="gchips"></div>
+    <div id="gList"></div>
+    <div style="display:flex;gap:10px;margin-top:18px"><button class="btn" id="gAdd" style="flex:2">+ Nuovo materiale</button><button class="btn ghost" id="gLabels" style="flex:1">Etichette QR</button></div>
+    <div class="demo-note" id="gDemo" hidden>Anteprima: il materiale mostrato è di esempio. Nell'app pubblicata parti da un magazzino vuoto.</div>
+  </section>
+
   <!-- STAFF -->
   <section class="view" id="v-staff">
     <div class="sec-head" style="margin-top:0"><h2>Staff</h2><span class="label" id="staffCount"></span></div>
@@ -269,11 +444,1262 @@ nav.tabs button.on svg{filter:drop-shadow(0 0 6px var(--brand))}
   <p class="note" id="note">Prototipo: i dati restano salvati solo su questo dispositivo. Il collegamento al calendario arriva nel prossimo passo.</p>
 </div>
 
+<div id="scanner" hidden></div>
+<div id="labels" hidden></div>
+<script>/* Generatore QR incorporato: QRCode for JavaScript, Kazuhiko Arase (licenza MIT), dal pacchetto qrcode-terminal. */
+var NXQR=(function(){var M={},C={};function R(n){n=n.replace(/^\.\/|\.js$/g,"");n=n.split("/").pop();if(C[n])return C[n].exports;var m={exports:{}};C[n]=m;M[n](m,m.exports,R);return m.exports}
+M["QRErrorCorrectLevel"]=function(module,exports,require){module.exports = {
+	L : 1,
+	M : 0,
+	Q : 3,
+	H : 2
+};
+
+
+};
+M["QRPolynomial"]=function(module,exports,require){var QRMath = require('./QRMath');
+
+function QRPolynomial(num, shift) {
+	if (num.length === undefined) {
+		throw new Error(num.length + "/" + shift);
+	}
+
+	var offset = 0;
+
+	while (offset < num.length && num[offset] === 0) {
+		offset++;
+	}
+
+	this.num = new Array(num.length - offset + shift);
+	for (var i = 0; i < num.length - offset; i++) {
+		this.num[i] = num[i + offset];
+	}
+}
+
+QRPolynomial.prototype = {
+
+	get : function(index) {
+		return this.num[index];
+	},
+	
+	getLength : function() {
+		return this.num.length;
+	},
+	
+	multiply : function(e) {
+	
+		var num = new Array(this.getLength() + e.getLength() - 1);
+	
+		for (var i = 0; i < this.getLength(); i++) {
+			for (var j = 0; j < e.getLength(); j++) {
+				num[i + j] ^= QRMath.gexp(QRMath.glog(this.get(i) ) + QRMath.glog(e.get(j) ) );
+			}
+		}
+	
+		return new QRPolynomial(num, 0);
+	},
+	
+	mod : function(e) {
+	
+		if (this.getLength() - e.getLength() < 0) {
+			return this;
+		}
+	
+		var ratio = QRMath.glog(this.get(0) ) - QRMath.glog(e.get(0) );
+	
+		var num = new Array(this.getLength() );
+		
+		for (var i = 0; i < this.getLength(); i++) {
+			num[i] = this.get(i);
+		}
+		
+		for (var x = 0; x < e.getLength(); x++) {
+			num[x] ^= QRMath.gexp(QRMath.glog(e.get(x) ) + ratio);
+		}
+	
+		// recursive call
+		return new QRPolynomial(num, 0).mod(e);
+	}
+};
+
+module.exports = QRPolynomial;
+
+};
+M["QRMaskPattern"]=function(module,exports,require){module.exports = {
+	PATTERN000 : 0,
+	PATTERN001 : 1,
+	PATTERN010 : 2,
+	PATTERN011 : 3,
+	PATTERN100 : 4,
+	PATTERN101 : 5,
+	PATTERN110 : 6,
+	PATTERN111 : 7
+};
+
+};
+M["QRMode"]=function(module,exports,require){module.exports = {
+    MODE_NUMBER :       1 << 0,
+    MODE_ALPHA_NUM :    1 << 1,
+    MODE_8BIT_BYTE :    1 << 2,
+    MODE_KANJI :        1 << 3
+};
+
+};
+M["QRUtil"]=function(module,exports,require){var QRMode = require('./QRMode');
+var QRPolynomial = require('./QRPolynomial');
+var QRMath = require('./QRMath');
+var QRMaskPattern = require('./QRMaskPattern');
+
+var QRUtil = {
+
+    PATTERN_POSITION_TABLE : [
+        [],
+        [6, 18],
+        [6, 22],
+        [6, 26],
+        [6, 30],
+        [6, 34],
+        [6, 22, 38],
+        [6, 24, 42],
+        [6, 26, 46],
+        [6, 28, 50],
+        [6, 30, 54],        
+        [6, 32, 58],
+        [6, 34, 62],
+        [6, 26, 46, 66],
+        [6, 26, 48, 70],
+        [6, 26, 50, 74],
+        [6, 30, 54, 78],
+        [6, 30, 56, 82],
+        [6, 30, 58, 86],
+        [6, 34, 62, 90],
+        [6, 28, 50, 72, 94],
+        [6, 26, 50, 74, 98],
+        [6, 30, 54, 78, 102],
+        [6, 28, 54, 80, 106],
+        [6, 32, 58, 84, 110],
+        [6, 30, 58, 86, 114],
+        [6, 34, 62, 90, 118],
+        [6, 26, 50, 74, 98, 122],
+        [6, 30, 54, 78, 102, 126],
+        [6, 26, 52, 78, 104, 130],
+        [6, 30, 56, 82, 108, 134],
+        [6, 34, 60, 86, 112, 138],
+        [6, 30, 58, 86, 114, 142],
+        [6, 34, 62, 90, 118, 146],
+        [6, 30, 54, 78, 102, 126, 150],
+        [6, 24, 50, 76, 102, 128, 154],
+        [6, 28, 54, 80, 106, 132, 158],
+        [6, 32, 58, 84, 110, 136, 162],
+        [6, 26, 54, 82, 110, 138, 166],
+        [6, 30, 58, 86, 114, 142, 170]
+    ],
+
+    G15 : (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0),
+    G18 : (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0),
+    G15_MASK : (1 << 14) | (1 << 12) | (1 << 10)    | (1 << 4) | (1 << 1),
+
+    getBCHTypeInfo : function(data) {
+        var d = data << 10;
+        while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) >= 0) {
+            d ^= (QRUtil.G15 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) ) );    
+        }
+        return ( (data << 10) | d) ^ QRUtil.G15_MASK;
+    },
+
+    getBCHTypeNumber : function(data) {
+        var d = data << 12;
+        while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) >= 0) {
+            d ^= (QRUtil.G18 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) ) );    
+        }
+        return (data << 12) | d;
+    },
+
+    getBCHDigit : function(data) {
+
+        var digit = 0;
+
+        while (data !== 0) {
+            digit++;
+            data >>>= 1;
+        }
+
+        return digit;
+    },
+
+    getPatternPosition : function(typeNumber) {
+        return QRUtil.PATTERN_POSITION_TABLE[typeNumber - 1];
+    },
+
+    getMask : function(maskPattern, i, j) {
+        
+        switch (maskPattern) {
+            
+        case QRMaskPattern.PATTERN000 : return (i + j) % 2 === 0;
+        case QRMaskPattern.PATTERN001 : return i % 2 === 0;
+        case QRMaskPattern.PATTERN010 : return j % 3 === 0;
+        case QRMaskPattern.PATTERN011 : return (i + j) % 3 === 0;
+        case QRMaskPattern.PATTERN100 : return (Math.floor(i / 2) + Math.floor(j / 3) ) % 2 === 0;
+        case QRMaskPattern.PATTERN101 : return (i * j) % 2 + (i * j) % 3 === 0;
+        case QRMaskPattern.PATTERN110 : return ( (i * j) % 2 + (i * j) % 3) % 2 === 0;
+        case QRMaskPattern.PATTERN111 : return ( (i * j) % 3 + (i + j) % 2) % 2 === 0;
+
+        default :
+            throw new Error("bad maskPattern:" + maskPattern);
+        }
+    },
+
+    getErrorCorrectPolynomial : function(errorCorrectLength) {
+
+        var a = new QRPolynomial([1], 0);
+
+        for (var i = 0; i < errorCorrectLength; i++) {
+            a = a.multiply(new QRPolynomial([1, QRMath.gexp(i)], 0) );
+        }
+
+        return a;
+    },
+
+    getLengthInBits : function(mode, type) {
+
+        if (1 <= type && type < 10) {
+
+            // 1 - 9
+
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 10;
+            case QRMode.MODE_ALPHA_NUM  : return 9;
+            case QRMode.MODE_8BIT_BYTE  : return 8;
+            case QRMode.MODE_KANJI      : return 8;
+            default :
+                throw new Error("mode:" + mode);
+            }
+
+        } else if (type < 27) {
+
+            // 10 - 26
+
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 12;
+            case QRMode.MODE_ALPHA_NUM  : return 11;
+            case QRMode.MODE_8BIT_BYTE  : return 16;
+            case QRMode.MODE_KANJI      : return 10;
+            default :
+                throw new Error("mode:" + mode);
+            }
+
+        } else if (type < 41) {
+
+            // 27 - 40
+
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 14;
+            case QRMode.MODE_ALPHA_NUM  : return 13;
+            case QRMode.MODE_8BIT_BYTE  : return 16;
+            case QRMode.MODE_KANJI      : return 12;
+            default :
+                throw new Error("mode:" + mode);
+            }
+
+        } else {
+            throw new Error("type:" + type);
+        }
+    },
+
+    getLostPoint : function(qrCode) {
+        
+        var moduleCount = qrCode.getModuleCount();
+        var lostPoint = 0;
+        var row = 0; 
+        var col = 0;
+
+        
+        // LEVEL1
+        
+        for (row = 0; row < moduleCount; row++) {
+
+            for (col = 0; col < moduleCount; col++) {
+
+                var sameCount = 0;
+                var dark = qrCode.isDark(row, col);
+
+                for (var r = -1; r <= 1; r++) {
+
+                    if (row + r < 0 || moduleCount <= row + r) {
+                        continue;
+                    }
+
+                    for (var c = -1; c <= 1; c++) {
+
+                        if (col + c < 0 || moduleCount <= col + c) {
+                            continue;
+                        }
+
+                        if (r === 0 && c === 0) {
+                            continue;
+                        }
+
+                        if (dark === qrCode.isDark(row + r, col + c) ) {
+                            sameCount++;
+                        }
+                    }
+                }
+
+                if (sameCount > 5) {
+                    lostPoint += (3 + sameCount - 5);
+                }
+            }
+        }
+
+        // LEVEL2
+
+        for (row = 0; row < moduleCount - 1; row++) {
+            for (col = 0; col < moduleCount - 1; col++) {
+                var count = 0;
+                if (qrCode.isDark(row,     col    ) ) count++;
+                if (qrCode.isDark(row + 1, col    ) ) count++;
+                if (qrCode.isDark(row,     col + 1) ) count++;
+                if (qrCode.isDark(row + 1, col + 1) ) count++;
+                if (count === 0 || count === 4) {
+                    lostPoint += 3;
+                }
+            }
+        }
+
+        // LEVEL3
+
+        for (row = 0; row < moduleCount; row++) {
+            for (col = 0; col < moduleCount - 6; col++) {
+                if (qrCode.isDark(row, col) && 
+                        !qrCode.isDark(row, col + 1) && 
+                         qrCode.isDark(row, col + 2) && 
+                         qrCode.isDark(row, col + 3) && 
+                         qrCode.isDark(row, col + 4) && 
+                        !qrCode.isDark(row, col + 5) && 
+                         qrCode.isDark(row, col + 6) ) {
+                    lostPoint += 40;
+                }
+            }
+        }
+
+        for (col = 0; col < moduleCount; col++) {
+            for (row = 0; row < moduleCount - 6; row++) {
+                if (qrCode.isDark(row, col) &&
+                        !qrCode.isDark(row + 1, col) &&
+                         qrCode.isDark(row + 2, col) &&
+                         qrCode.isDark(row + 3, col) &&
+                         qrCode.isDark(row + 4, col) &&
+                        !qrCode.isDark(row + 5, col) &&
+                         qrCode.isDark(row + 6, col) ) {
+                    lostPoint += 40;
+                }
+            }
+        }
+
+        // LEVEL4
+        
+        var darkCount = 0;
+
+        for (col = 0; col < moduleCount; col++) {
+            for (row = 0; row < moduleCount; row++) {
+                if (qrCode.isDark(row, col) ) {
+                    darkCount++;
+                }
+            }
+        }
+        
+        var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
+        lostPoint += ratio * 10;
+
+        return lostPoint;       
+    }
+
+};
+
+module.exports = QRUtil;
+
+};
+M["QRMath"]=function(module,exports,require){var QRMath = {
+
+	glog : function(n) {
+	
+		if (n < 1) {
+			throw new Error("glog(" + n + ")");
+		}
+		
+		return QRMath.LOG_TABLE[n];
+	},
+	
+	gexp : function(n) {
+	
+		while (n < 0) {
+			n += 255;
+		}
+	
+		while (n >= 256) {
+			n -= 255;
+		}
+	
+		return QRMath.EXP_TABLE[n];
+	},
+	
+	EXP_TABLE : new Array(256),
+	
+	LOG_TABLE : new Array(256)
+
+};
+	
+for (var i = 0; i < 8; i++) {
+	QRMath.EXP_TABLE[i] = 1 << i;
+}
+for (var i = 8; i < 256; i++) {
+	QRMath.EXP_TABLE[i] = QRMath.EXP_TABLE[i - 4]
+		^ QRMath.EXP_TABLE[i - 5]
+		^ QRMath.EXP_TABLE[i - 6]
+		^ QRMath.EXP_TABLE[i - 8];
+}
+for (var i = 0; i < 255; i++) {
+	QRMath.LOG_TABLE[QRMath.EXP_TABLE[i] ] = i;
+}
+
+module.exports = QRMath;
+
+};
+M["QR8bitByte"]=function(module,exports,require){var QRMode = require('./QRMode');
+
+function QR8bitByte(data) {
+	this.mode = QRMode.MODE_8BIT_BYTE;
+	this.data = data;
+}
+
+QR8bitByte.prototype = {
+
+	getLength : function() {
+		return this.data.length;
+	},
+	
+	write : function(buffer) {
+		for (var i = 0; i < this.data.length; i++) {
+			// not JIS ...
+			buffer.put(this.data.charCodeAt(i), 8);
+		}
+	}
+};
+
+module.exports = QR8bitByte;
+
+};
+M["index"]=function(module,exports,require){//---------------------------------------------------------------------
+// QRCode for JavaScript
+//
+// Copyright (c) 2009 Kazuhiko Arase
+//
+// URL: http://www.d-project.com/
+//
+// Licensed under the MIT license:
+//   http://www.opensource.org/licenses/mit-license.php
+//
+// The word "QR Code" is registered trademark of 
+// DENSO WAVE INCORPORATED
+//   http://www.denso-wave.com/qrcode/faqpatent-e.html
+//
+//---------------------------------------------------------------------
+// Modified to work in node for this project (and some refactoring)
+//---------------------------------------------------------------------
+
+var QR8bitByte = require('./QR8bitByte');
+var QRUtil = require('./QRUtil');
+var QRPolynomial = require('./QRPolynomial');
+var QRRSBlock = require('./QRRSBlock');
+var QRBitBuffer = require('./QRBitBuffer');
+
+function QRCode(typeNumber, errorCorrectLevel) {
+	this.typeNumber = typeNumber;
+	this.errorCorrectLevel = errorCorrectLevel;
+	this.modules = null;
+	this.moduleCount = 0;
+	this.dataCache = null;
+	this.dataList = [];
+}
+
+QRCode.prototype = {
+	
+	addData : function(data) {
+		var newData = new QR8bitByte(data);
+		this.dataList.push(newData);
+		this.dataCache = null;
+	},
+	
+	isDark : function(row, col) {
+		if (row < 0 || this.moduleCount <= row || col < 0 || this.moduleCount <= col) {
+			throw new Error(row + "," + col);
+		}
+		return this.modules[row][col];
+	},
+
+	getModuleCount : function() {
+		return this.moduleCount;
+	},
+	
+	make : function() {
+		// Calculate automatically typeNumber if provided is < 1
+		if (this.typeNumber < 1 ){
+			var typeNumber = 1;
+			for (typeNumber = 1; typeNumber < 40; typeNumber++) {
+				var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, this.errorCorrectLevel);
+
+				var buffer = new QRBitBuffer();
+				var totalDataCount = 0;
+				for (var i = 0; i < rsBlocks.length; i++) {
+					totalDataCount += rsBlocks[i].dataCount;
+				}
+
+				for (var x = 0; x < this.dataList.length; x++) {
+					var data = this.dataList[x];
+					buffer.put(data.mode, 4);
+					buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber) );
+					data.write(buffer);
+				}
+				if (buffer.getLengthInBits() <= totalDataCount * 8)
+					break;
+			}
+			this.typeNumber = typeNumber;
+		}
+		this.makeImpl(false, this.getBestMaskPattern() );
+	},
+	
+	makeImpl : function(test, maskPattern) {
+		
+		this.moduleCount = this.typeNumber * 4 + 17;
+		this.modules = new Array(this.moduleCount);
+		
+		for (var row = 0; row < this.moduleCount; row++) {
+			
+			this.modules[row] = new Array(this.moduleCount);
+			
+			for (var col = 0; col < this.moduleCount; col++) {
+				this.modules[row][col] = null;//(col + row) % 3;
+			}
+		}
+	
+		this.setupPositionProbePattern(0, 0);
+		this.setupPositionProbePattern(this.moduleCount - 7, 0);
+		this.setupPositionProbePattern(0, this.moduleCount - 7);
+		this.setupPositionAdjustPattern();
+		this.setupTimingPattern();
+		this.setupTypeInfo(test, maskPattern);
+		
+		if (this.typeNumber >= 7) {
+			this.setupTypeNumber(test);
+		}
+	
+		if (this.dataCache === null) {
+			this.dataCache = QRCode.createData(this.typeNumber, this.errorCorrectLevel, this.dataList);
+		}
+	
+		this.mapData(this.dataCache, maskPattern);
+	},
+
+	setupPositionProbePattern : function(row, col)  {
+		
+		for (var r = -1; r <= 7; r++) {
+			
+			if (row + r <= -1 || this.moduleCount <= row + r) continue;
+			
+			for (var c = -1; c <= 7; c++) {
+				
+				if (col + c <= -1 || this.moduleCount <= col + c) continue;
+				
+				if ( (0 <= r && r <= 6 && (c === 0 || c === 6) ) || 
+                     (0 <= c && c <= 6 && (r === 0 || r === 6) ) || 
+                     (2 <= r && r <= 4 && 2 <= c && c <= 4) ) {
+					this.modules[row + r][col + c] = true;
+				} else {
+					this.modules[row + r][col + c] = false;
+				}
+			}		
+		}		
+	},
+	
+	getBestMaskPattern : function() {
+	
+		var minLostPoint = 0;
+		var pattern = 0;
+	
+		for (var i = 0; i < 8; i++) {
+			
+			this.makeImpl(true, i);
+	
+			var lostPoint = QRUtil.getLostPoint(this);
+	
+			if (i === 0 || minLostPoint >  lostPoint) {
+				minLostPoint = lostPoint;
+				pattern = i;
+			}
+		}
+	
+		return pattern;
+	},
+	
+	createMovieClip : function(target_mc, instance_name, depth) {
+	
+		var qr_mc = target_mc.createEmptyMovieClip(instance_name, depth);
+		var cs = 1;
+	
+		this.make();
+
+		for (var row = 0; row < this.modules.length; row++) {
+			
+			var y = row * cs;
+			
+			for (var col = 0; col < this.modules[row].length; col++) {
+	
+				var x = col * cs;
+				var dark = this.modules[row][col];
+			
+				if (dark) {
+					qr_mc.beginFill(0, 100);
+					qr_mc.moveTo(x, y);
+					qr_mc.lineTo(x + cs, y);
+					qr_mc.lineTo(x + cs, y + cs);
+					qr_mc.lineTo(x, y + cs);
+					qr_mc.endFill();
+				}
+			}
+		}
+		
+		return qr_mc;
+	},
+
+	setupTimingPattern : function() {
+		
+		for (var r = 8; r < this.moduleCount - 8; r++) {
+			if (this.modules[r][6] !== null) {
+				continue;
+			}
+			this.modules[r][6] = (r % 2 === 0);
+		}
+	
+		for (var c = 8; c < this.moduleCount - 8; c++) {
+			if (this.modules[6][c] !== null) {
+				continue;
+			}
+			this.modules[6][c] = (c % 2 === 0);
+		}
+	},
+	
+	setupPositionAdjustPattern : function() {
+	
+		var pos = QRUtil.getPatternPosition(this.typeNumber);
+		
+		for (var i = 0; i < pos.length; i++) {
+		
+			for (var j = 0; j < pos.length; j++) {
+			
+				var row = pos[i];
+				var col = pos[j];
+				
+				if (this.modules[row][col] !== null) {
+					continue;
+				}
+				
+				for (var r = -2; r <= 2; r++) {
+				
+					for (var c = -2; c <= 2; c++) {
+					
+						if (Math.abs(r) === 2 || 
+                            Math.abs(c) === 2 ||
+                            (r === 0 && c === 0) ) {
+							this.modules[row + r][col + c] = true;
+						} else {
+							this.modules[row + r][col + c] = false;
+						}
+					}
+				}
+			}
+		}
+	},
+	
+	setupTypeNumber : function(test) {
+	
+		var bits = QRUtil.getBCHTypeNumber(this.typeNumber);
+        var mod;
+	
+		for (var i = 0; i < 18; i++) {
+			mod = (!test && ( (bits >> i) & 1) === 1);
+			this.modules[Math.floor(i / 3)][i % 3 + this.moduleCount - 8 - 3] = mod;
+		}
+	
+		for (var x = 0; x < 18; x++) {
+			mod = (!test && ( (bits >> x) & 1) === 1);
+			this.modules[x % 3 + this.moduleCount - 8 - 3][Math.floor(x / 3)] = mod;
+		}
+	},
+	
+	setupTypeInfo : function(test, maskPattern) {
+	
+		var data = (this.errorCorrectLevel << 3) | maskPattern;
+		var bits = QRUtil.getBCHTypeInfo(data);
+        var mod;
+	
+		// vertical		
+		for (var v = 0; v < 15; v++) {
+	
+			mod = (!test && ( (bits >> v) & 1) === 1);
+	
+			if (v < 6) {
+				this.modules[v][8] = mod;
+			} else if (v < 8) {
+				this.modules[v + 1][8] = mod;
+			} else {
+				this.modules[this.moduleCount - 15 + v][8] = mod;
+			}
+		}
+	
+		// horizontal
+		for (var h = 0; h < 15; h++) {
+	
+			mod = (!test && ( (bits >> h) & 1) === 1);
+			
+			if (h < 8) {
+				this.modules[8][this.moduleCount - h - 1] = mod;
+			} else if (h < 9) {
+				this.modules[8][15 - h - 1 + 1] = mod;
+			} else {
+				this.modules[8][15 - h - 1] = mod;
+			}
+		}
+	
+		// fixed module
+		this.modules[this.moduleCount - 8][8] = (!test);
+	
+	},
+	
+	mapData : function(data, maskPattern) {
+		
+		var inc = -1;
+		var row = this.moduleCount - 1;
+		var bitIndex = 7;
+		var byteIndex = 0;
+		
+		for (var col = this.moduleCount - 1; col > 0; col -= 2) {
+	
+			if (col === 6) col--;
+	
+			while (true) {
+	
+				for (var c = 0; c < 2; c++) {
+					
+					if (this.modules[row][col - c] === null) {
+						
+						var dark = false;
+	
+						if (byteIndex < data.length) {
+							dark = ( ( (data[byteIndex] >>> bitIndex) & 1) === 1);
+						}
+	
+						var mask = QRUtil.getMask(maskPattern, row, col - c);
+	
+						if (mask) {
+							dark = !dark;
+						}
+						
+						this.modules[row][col - c] = dark;
+						bitIndex--;
+	
+						if (bitIndex === -1) {
+							byteIndex++;
+							bitIndex = 7;
+						}
+					}
+				}
+								
+				row += inc;
+	
+				if (row < 0 || this.moduleCount <= row) {
+					row -= inc;
+					inc = -inc;
+					break;
+				}
+			}
+		}
+		
+	}
+
+};
+
+QRCode.PAD0 = 0xEC;
+QRCode.PAD1 = 0x11;
+
+QRCode.createData = function(typeNumber, errorCorrectLevel, dataList) {
+	
+	var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectLevel);
+	
+	var buffer = new QRBitBuffer();
+	
+	for (var i = 0; i < dataList.length; i++) {
+		var data = dataList[i];
+		buffer.put(data.mode, 4);
+		buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber) );
+		data.write(buffer);
+	}
+
+	// calc num max data.
+	var totalDataCount = 0;
+	for (var x = 0; x < rsBlocks.length; x++) {
+		totalDataCount += rsBlocks[x].dataCount;
+	}
+
+	if (buffer.getLengthInBits() > totalDataCount * 8) {
+		throw new Error("code length overflow. (" + 
+            buffer.getLengthInBits() + 
+            ">" +  
+            totalDataCount * 8 + 
+            ")");
+	}
+
+	// end code
+	if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
+		buffer.put(0, 4);
+	}
+
+	// padding
+	while (buffer.getLengthInBits() % 8 !== 0) {
+		buffer.putBit(false);
+	}
+
+	// padding
+	while (true) {
+		
+		if (buffer.getLengthInBits() >= totalDataCount * 8) {
+			break;
+		}
+		buffer.put(QRCode.PAD0, 8);
+		
+		if (buffer.getLengthInBits() >= totalDataCount * 8) {
+			break;
+		}
+		buffer.put(QRCode.PAD1, 8);
+	}
+
+	return QRCode.createBytes(buffer, rsBlocks);
+};
+
+QRCode.createBytes = function(buffer, rsBlocks) {
+
+	var offset = 0;
+	
+	var maxDcCount = 0;
+	var maxEcCount = 0;
+	
+	var dcdata = new Array(rsBlocks.length);
+	var ecdata = new Array(rsBlocks.length);
+	
+	for (var r = 0; r < rsBlocks.length; r++) {
+
+		var dcCount = rsBlocks[r].dataCount;
+		var ecCount = rsBlocks[r].totalCount - dcCount;
+
+		maxDcCount = Math.max(maxDcCount, dcCount);
+		maxEcCount = Math.max(maxEcCount, ecCount);
+		
+		dcdata[r] = new Array(dcCount);
+		
+		for (var i = 0; i < dcdata[r].length; i++) {
+			dcdata[r][i] = 0xff & buffer.buffer[i + offset];
+		}
+		offset += dcCount;
+		
+		var rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
+		var rawPoly = new QRPolynomial(dcdata[r], rsPoly.getLength() - 1);
+
+		var modPoly = rawPoly.mod(rsPoly);
+		ecdata[r] = new Array(rsPoly.getLength() - 1);
+		for (var x = 0; x < ecdata[r].length; x++) {
+            var modIndex = x + modPoly.getLength() - ecdata[r].length;
+			ecdata[r][x] = (modIndex >= 0)? modPoly.get(modIndex) : 0;
+		}
+
+	}
+	
+	var totalCodeCount = 0;
+	for (var y = 0; y < rsBlocks.length; y++) {
+		totalCodeCount += rsBlocks[y].totalCount;
+	}
+
+	var data = new Array(totalCodeCount);
+	var index = 0;
+
+	for (var z = 0; z < maxDcCount; z++) {
+		for (var s = 0; s < rsBlocks.length; s++) {
+			if (z < dcdata[s].length) {
+				data[index++] = dcdata[s][z];
+			}
+		}
+	}
+
+	for (var xx = 0; xx < maxEcCount; xx++) {
+		for (var t = 0; t < rsBlocks.length; t++) {
+			if (xx < ecdata[t].length) {
+				data[index++] = ecdata[t][xx];
+			}
+		}
+	}
+
+	return data;
+
+};
+
+module.exports = QRCode;
+
+};
+M["QRBitBuffer"]=function(module,exports,require){function QRBitBuffer() {
+	this.buffer = [];
+	this.length = 0;
+}
+
+QRBitBuffer.prototype = {
+
+	get : function(index) {
+		var bufIndex = Math.floor(index / 8);
+		return ( (this.buffer[bufIndex] >>> (7 - index % 8) ) & 1) == 1;
+	},
+	
+	put : function(num, length) {
+		for (var i = 0; i < length; i++) {
+			this.putBit( ( (num >>> (length - i - 1) ) & 1) == 1);
+		}
+	},
+	
+	getLengthInBits : function() {
+		return this.length;
+	},
+	
+	putBit : function(bit) {
+	
+		var bufIndex = Math.floor(this.length / 8);
+		if (this.buffer.length <= bufIndex) {
+			this.buffer.push(0);
+		}
+	
+		if (bit) {
+			this.buffer[bufIndex] |= (0x80 >>> (this.length % 8) );
+		}
+	
+		this.length++;
+	}
+};
+
+module.exports = QRBitBuffer;
+
+};
+M["QRRSBlock"]=function(module,exports,require){var QRErrorCorrectLevel = require('./QRErrorCorrectLevel');
+
+function QRRSBlock(totalCount, dataCount) {
+	this.totalCount = totalCount;
+	this.dataCount  = dataCount;
+}
+
+QRRSBlock.RS_BLOCK_TABLE = [
+
+	// L
+	// M
+	// Q
+	// H
+
+	// 1
+	[1, 26, 19],
+	[1, 26, 16],
+	[1, 26, 13],
+	[1, 26, 9],
+	
+	// 2
+	[1, 44, 34],
+	[1, 44, 28],
+	[1, 44, 22],
+	[1, 44, 16],
+
+	// 3
+	[1, 70, 55],
+	[1, 70, 44],
+	[2, 35, 17],
+	[2, 35, 13],
+
+	// 4		
+	[1, 100, 80],
+	[2, 50, 32],
+	[2, 50, 24],
+	[4, 25, 9],
+	
+	// 5
+	[1, 134, 108],
+	[2, 67, 43],
+	[2, 33, 15, 2, 34, 16],
+	[2, 33, 11, 2, 34, 12],
+	
+	// 6
+	[2, 86, 68],
+	[4, 43, 27],
+	[4, 43, 19],
+	[4, 43, 15],
+	
+	// 7		
+	[2, 98, 78],
+	[4, 49, 31],
+	[2, 32, 14, 4, 33, 15],
+	[4, 39, 13, 1, 40, 14],
+	
+	// 8
+	[2, 121, 97],
+	[2, 60, 38, 2, 61, 39],
+	[4, 40, 18, 2, 41, 19],
+	[4, 40, 14, 2, 41, 15],
+	
+	// 9
+	[2, 146, 116],
+	[3, 58, 36, 2, 59, 37],
+	[4, 36, 16, 4, 37, 17],
+	[4, 36, 12, 4, 37, 13],
+	
+	// 10		
+	[2, 86, 68, 2, 87, 69],
+	[4, 69, 43, 1, 70, 44],
+	[6, 43, 19, 2, 44, 20],
+	[6, 43, 15, 2, 44, 16],
+
+	// 11
+	[4, 101, 81],
+	[1, 80, 50, 4, 81, 51],
+	[4, 50, 22, 4, 51, 23],
+	[3, 36, 12, 8, 37, 13],
+
+	// 12
+	[2, 116, 92, 2, 117, 93],
+	[6, 58, 36, 2, 59, 37],
+	[4, 46, 20, 6, 47, 21],
+	[7, 42, 14, 4, 43, 15],
+
+	// 13
+	[4, 133, 107],
+	[8, 59, 37, 1, 60, 38],
+	[8, 44, 20, 4, 45, 21],
+	[12, 33, 11, 4, 34, 12],
+
+	// 14
+	[3, 145, 115, 1, 146, 116],
+	[4, 64, 40, 5, 65, 41],
+	[11, 36, 16, 5, 37, 17],
+	[11, 36, 12, 5, 37, 13],
+
+	// 15
+	[5, 109, 87, 1, 110, 88],
+	[5, 65, 41, 5, 66, 42],
+	[5, 54, 24, 7, 55, 25],
+	[11, 36, 12],
+
+	// 16
+	[5, 122, 98, 1, 123, 99],
+	[7, 73, 45, 3, 74, 46],
+	[15, 43, 19, 2, 44, 20],
+	[3, 45, 15, 13, 46, 16],
+
+	// 17
+	[1, 135, 107, 5, 136, 108],
+	[10, 74, 46, 1, 75, 47],
+	[1, 50, 22, 15, 51, 23],
+	[2, 42, 14, 17, 43, 15],
+
+	// 18
+	[5, 150, 120, 1, 151, 121],
+	[9, 69, 43, 4, 70, 44],
+	[17, 50, 22, 1, 51, 23],
+	[2, 42, 14, 19, 43, 15],
+
+	// 19
+	[3, 141, 113, 4, 142, 114],
+	[3, 70, 44, 11, 71, 45],
+	[17, 47, 21, 4, 48, 22],
+	[9, 39, 13, 16, 40, 14],
+
+	// 20
+	[3, 135, 107, 5, 136, 108],
+	[3, 67, 41, 13, 68, 42],
+	[15, 54, 24, 5, 55, 25],
+	[15, 43, 15, 10, 44, 16],
+
+	// 21
+	[4, 144, 116, 4, 145, 117],
+	[17, 68, 42],
+	[17, 50, 22, 6, 51, 23],
+	[19, 46, 16, 6, 47, 17],
+
+	// 22
+	[2, 139, 111, 7, 140, 112],
+	[17, 74, 46],
+	[7, 54, 24, 16, 55, 25],
+	[34, 37, 13],
+
+	// 23
+	[4, 151, 121, 5, 152, 122],
+	[4, 75, 47, 14, 76, 48],
+	[11, 54, 24, 14, 55, 25],
+	[16, 45, 15, 14, 46, 16],
+
+	// 24
+	[6, 147, 117, 4, 148, 118],
+	[6, 73, 45, 14, 74, 46],
+	[11, 54, 24, 16, 55, 25],
+	[30, 46, 16, 2, 47, 17],
+
+	// 25
+	[8, 132, 106, 4, 133, 107],
+	[8, 75, 47, 13, 76, 48],
+	[7, 54, 24, 22, 55, 25],
+	[22, 45, 15, 13, 46, 16],
+
+	// 26
+	[10, 142, 114, 2, 143, 115],
+	[19, 74, 46, 4, 75, 47],
+	[28, 50, 22, 6, 51, 23],
+	[33, 46, 16, 4, 47, 17],
+
+	// 27
+	[8, 152, 122, 4, 153, 123],
+	[22, 73, 45, 3, 74, 46],
+	[8, 53, 23, 26, 54, 24],
+	[12, 45, 15, 28, 46, 16],
+
+	// 28
+	[3, 147, 117, 10, 148, 118],
+	[3, 73, 45, 23, 74, 46],
+	[4, 54, 24, 31, 55, 25],
+	[11, 45, 15, 31, 46, 16],
+
+	// 29
+	[7, 146, 116, 7, 147, 117],
+	[21, 73, 45, 7, 74, 46],
+	[1, 53, 23, 37, 54, 24],
+	[19, 45, 15, 26, 46, 16],
+
+	// 30
+	[5, 145, 115, 10, 146, 116],
+	[19, 75, 47, 10, 76, 48],
+	[15, 54, 24, 25, 55, 25],
+	[23, 45, 15, 25, 46, 16],
+
+	// 31
+	[13, 145, 115, 3, 146, 116],
+	[2, 74, 46, 29, 75, 47],
+	[42, 54, 24, 1, 55, 25],
+	[23, 45, 15, 28, 46, 16],
+
+	// 32
+	[17, 145, 115],
+	[10, 74, 46, 23, 75, 47],
+	[10, 54, 24, 35, 55, 25],
+	[19, 45, 15, 35, 46, 16],
+
+	// 33
+	[17, 145, 115, 1, 146, 116],
+	[14, 74, 46, 21, 75, 47],
+	[29, 54, 24, 19, 55, 25],
+	[11, 45, 15, 46, 46, 16],
+
+	// 34
+	[13, 145, 115, 6, 146, 116],
+	[14, 74, 46, 23, 75, 47],
+	[44, 54, 24, 7, 55, 25],
+	[59, 46, 16, 1, 47, 17],
+
+	// 35
+	[12, 151, 121, 7, 152, 122],
+	[12, 75, 47, 26, 76, 48],
+	[39, 54, 24, 14, 55, 25],
+	[22, 45, 15, 41, 46, 16],
+
+	// 36
+	[6, 151, 121, 14, 152, 122],
+	[6, 75, 47, 34, 76, 48],
+	[46, 54, 24, 10, 55, 25],
+	[2, 45, 15, 64, 46, 16],
+
+	// 37
+	[17, 152, 122, 4, 153, 123],
+	[29, 74, 46, 14, 75, 47],
+	[49, 54, 24, 10, 55, 25],
+	[24, 45, 15, 46, 46, 16],
+
+	// 38
+	[4, 152, 122, 18, 153, 123],
+	[13, 74, 46, 32, 75, 47],
+	[48, 54, 24, 14, 55, 25],
+	[42, 45, 15, 32, 46, 16],
+
+	// 39
+	[20, 147, 117, 4, 148, 118],
+	[40, 75, 47, 7, 76, 48],
+	[43, 54, 24, 22, 55, 25],
+	[10, 45, 15, 67, 46, 16],
+
+	// 40
+	[19, 148, 118, 6, 149, 119],
+	[18, 75, 47, 31, 76, 48],
+	[34, 54, 24, 34, 55, 25],
+	[20, 45, 15, 61, 46, 16]
+];
+
+QRRSBlock.getRSBlocks = function(typeNumber, errorCorrectLevel) {
+	
+	var rsBlock = QRRSBlock.getRsBlockTable(typeNumber, errorCorrectLevel);
+	
+	if (rsBlock === undefined) {
+		throw new Error("bad rs block @ typeNumber:" + typeNumber + "/errorCorrectLevel:" + errorCorrectLevel);
+	}
+
+	var length = rsBlock.length / 3;
+	
+	var list = [];
+	
+	for (var i = 0; i < length; i++) {
+
+		var count = rsBlock[i * 3 + 0];
+		var totalCount = rsBlock[i * 3 + 1];
+		var dataCount  = rsBlock[i * 3 + 2];
+
+		for (var j = 0; j < count; j++) {
+			list.push(new QRRSBlock(totalCount, dataCount) );	
+		}
+	}
+	
+	return list;
+};
+
+QRRSBlock.getRsBlockTable = function(typeNumber, errorCorrectLevel) {
+
+	switch(errorCorrectLevel) {
+	case QRErrorCorrectLevel.L :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
+	case QRErrorCorrectLevel.M :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
+	case QRErrorCorrectLevel.Q :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
+	case QRErrorCorrectLevel.H :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
+	default :
+		return undefined;
+	}
+};
+
+module.exports = QRRSBlock;
+
+};
+var Q=R("index"),L=R("QRErrorCorrectLevel");return function(text,level){var q=new Q(-1,L[level||"M"]);q.addData(text);q.make();var n=q.getModuleCount(),rows=[];for(var r=0;r<n;r++){var row=[];for(var c=0;c<n;c++)row.push(q.isDark(r,c));rows.push(row)}return rows}})();</script>
 <nav class="tabs"><div class="in">
   <button class="on" data-v="home"><svg viewBox="0 0 24 24"><path d="M12 7v5l3 2"/><circle cx="12" cy="12" r="9"/></svg>Scadenze</button>
   <button data-v="cal"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Calendario</button>
   <button data-v="new"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Nuovo</button>
   <button data-v="todo"><svg viewBox="0 0 24 24"><path d="M4 7l2 2 4-4M4 17l2 2 4-4M13 7h7M13 17h7"/></svg>To do</button>
+  <button data-v="gear"><svg viewBox="0 0 24 24"><path d="M3 8l9-5 9 5v8l-9 5-9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>Magazzino</button>
   <button data-v="staff"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c1.9.7 3.1 2.4 3.5 5.2"/></svg>Staff</button>
 </div></nav>
 
@@ -366,7 +1792,7 @@ function renderHome(){
    <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><span class="chip" style="--c:${c.c}">${c.name}</span><span class="status ${e.status}">${e.status==="ok"?"Confermato":"Opzionato"}</span></div>
    <div class="bigdate"><div class="dn">${d.getDate()}</div><div class="dm"><span>${["domenica","lunedì","martedì","mercoledì","giovedì","venerdì","sabato"][d.getDay()]}</span>${MESI[d.getMonth()]}</div><div class="sep"></div><div class="count">${n===0?"OGGI":n}${n>0?`<small>${n===1?"giorno":"giorni"}</small>`:""}</div></div>
    <h3>${esc(e.title)}</h3>
-   <div class="meta"><span>📍 <b>${esc(e.place)}</b></span>${e.pay?`<span>Compenso <b>${eur(e.pay)}</b></span>`:""}${e.dep?`<span>Partenza <b>${e.dep}</b></span>`:""}${e.staff?.length?`<span>Staff <b>${e.staff.join(", ")}</b></span>`:""}</div>
+   <div class="meta"><span>📍 <b>${esc(e.place)}</b></span>${e.pay?`<span>Compenso <b>${eur(e.pay)}</b></span>`:""}${(e.gear||[]).length?(()=>{const p=progOf(e,"load");return `<span>Materiale <b>${p.done}/${p.tot}</b> caricato</span>`})():""}${e.dep?`<span>Partenza <b>${e.dep}</b></span>`:""}${e.staff?.length?`<span>Staff <b>${e.staff.join(", ")}</b></span>`:""}</div>
    <div style="margin-top:14px"><a class="maplink" href="${mapUrl(e.place)}" target="_blank" rel="noopener">Apri ${esc(e.place)} in Mappe ↗</a></div></div>`}
  $("#upcoming").innerHTML=up.slice(1).map(evRow).join("")||`<div class="empty">Dopo questo, calendario libero.</div>`;
  $("#nextCount").textContent=up.length+" in programma";
@@ -408,8 +1834,10 @@ function openEv(id){const e=S.events.find(x=>x.id==id);if(!e)return;const c=cat(
  <dl class="kv"><dt>Data</dt><dd>${GG[d.getDay()]} ${d.getDate()} ${MESI[d.getMonth()]} ${d.getFullYear()}</dd><dt>Luogo</dt><dd>${esc(e.place)} · <a class="maplink" href="${mapUrl(e.place)}" target="_blank" rel="noopener">Mappe ↗</a></dd>
  <dt>Cliente</dt><dd>${esc(e.client)||"—"}</dd><dt>Partenza</dt><dd>${e.dep||"—"}</dd><dt>Load-in</dt><dd>${e.loadin||"—"}</dd><dt>Show</dt><dd>${e.show||"—"}</dd>
  <dt>Staff</dt><dd>${e.staff?.join(", ")||"—"}</dd><dt>Compenso</dt><dd>${e.pay?eur(e.pay):"—"}</dd><dt>Stato</dt><dd>${e.status==="ok"?"Confermato":"Opzionato"}</dd><dt>Note</dt><dd>${esc(e.notes)||"—"}</dd></dl>
+ ${gearBox(e)}
  <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn ghost" id="delEv" style="flex:1">Elimina</button><button class="btn ghost" id="editEv" style="flex:1">Modifica</button><button class="btn" id="closeS" style="flex:1">Chiudi</button></div>`;
  $("#editEv").onclick=()=>{$("#sheet").hidden=true;startEdit(e)};
+ document.querySelectorAll("[data-evgear]").forEach(b=>b.onclick=()=>openEvGear(e.id,b.dataset.evgear));
  $("#sheet").hidden=false;
  $("#closeS").onclick=()=>$("#sheet").hidden=true;
  $("#delEv").onclick=function(){if(this.dataset.c){S.events=S.events.filter(x=>x.id!=id);save();$("#sheet").hidden=true;renderAll();toast("Evento eliminato")}else{this.dataset.c=1;this.textContent="Tocca per confermare"}};
@@ -453,11 +1881,371 @@ $("#projs").addEventListener("click",e=>{if(e.target.tagName!=="BUTTON")return;c
  if(!ins[0].value.trim())return;S.projects.find(x=>x.id==box.dataset.p).tasks.push({t:ins[0].value.trim(),d:false,due:ins[1].value||""});save();renderTodo();renderHome()});
 $("#addProj").onclick=()=>{const v=$("#newProj").value.trim();if(!v)return;S.projects.push({id:Date.now(),name:v,tasks:[]});$("#newProj").value="";save();renderTodo()};
 
+
+/* ===== MAGAZZINO ===== */
+const GCATS=[
+ {id:"luci",name:"Luci",c:"var(--magenta)",i:'<path d="M8 3h8l-2 6h-4z"/><path d="M10 9 6 21M14 9l4 12"/>'},
+ {id:"audio",name:"Audio",c:"var(--cyan)",i:'<rect x="6" y="3" width="12" height="18" rx="2"/><circle cx="12" cy="14" r="3.5"/><circle cx="12" cy="7.3" r="1.3"/>'},
+ {id:"consolle",name:"Consolle",c:"var(--brand)",i:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M8 9v6M12 9v6M16 9v6"/><path d="M6.6 13h2.8M10.6 10.5h2.8M14.6 12h2.8"/>'},
+ {id:"dmx",name:"DMX e rete",c:"var(--violet)",i:'<circle cx="12" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/><path d="M12 7v5M12 12l-6 5M12 12l6 5"/>'},
+ {id:"cavi",name:"Cavi",c:"var(--amber)",i:'<rect x="3" y="6" width="5" height="5" rx="1"/><rect x="16" y="13" width="5" height="5" rx="1"/><path d="M8 8.5c7 0 1 7 8 7"/>'},
+ {id:"strutture",name:"Strutture",c:"var(--lime)",i:'<path d="M3 20 12 4l9 16z"/><path d="M7.5 12h9M5.3 16h13.4"/>'},
+ {id:"varie",name:"Varie",c:"var(--muted)",i:'<path d="M3 8l9-5 9 5v8l-9 5-9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/>'}];
+const gcat=id=>GCATS.find(c=>c.id===id)||GCATS[GCATS.length-1];
+const OWN={nostro:"Nostro",noleggio:"Noleggio",prestito:"Prestito"};
+const GSTATE={ok:"Ok",chk:"Da controllare",rep:"In riparazione",ko:"Fuori uso"};
+const PREVIEW=!/github\.io$/.test(location.hostname);
+const APP_URL="https://ilcarroz04.github.io/nexus/";
+const SCAN_ICO='<svg viewBox="0 0 24 24"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M4 12h16"/></svg>';
+const clone=o=>JSON.parse(JSON.stringify(o));
+
+/* --- dati di esempio solo nell'anteprima --- */
+function seedGear(){
+ const dd=n=>{const x=new Date(TODAY);x.setDate(x.getDate()+n);return iso(x)};
+ let n=0;const code=()=>"NX-"+String(++n).padStart(4,"0");
+ const units=(k,bad={})=>Array.from({length:k},(_,i)=>({c:code(),n:"#"+(i+1),st:bad[i+1]||"ok"}));
+ const G=[
+  {id:"g1",name:"Testa mobile spot",cat:"luci",track:"unit",units:units(8),brand:"Esempio",loc:"Scaffale A",owner:"nostro"},
+  {id:"g2",name:"Barra LED wash",cat:"luci",track:"unit",units:units(6,{4:"chk"}),brand:"Esempio",loc:"Scaffale A",owner:"nostro"},
+  {id:"g4",name:"Consolle onPC + wing",cat:"consolle",track:"unit",units:units(1),brand:"Esempio",loc:"Ufficio",owner:"nostro"},
+  {id:"g5",name:"Nodo Art-Net 4 universi",cat:"dmx",track:"unit",units:units(2),loc:"Cassa rete",owner:"nostro"},
+  {id:"g6",name:"Splitter DMX 6 vie",cat:"dmx",track:"unit",units:units(2,{2:"chk"}),loc:"Cassa rete",owner:"nostro"},
+  {id:"g9",name:"Mixer digitale",cat:"audio",track:"unit",units:units(1,{1:"rep"}),loc:"Ufficio",owner:"nostro"},
+  {id:"g3",name:"Hazer",cat:"varie",track:"unit",units:units(1),brand:"Esempio",owner:"noleggio",from:"Service esempio",returnBy:dd(5)},
+  {id:"g7",name:"Cavo DMX 5 pin 10 m",cat:"cavi",track:"bulk",cases:[{c:code(),n:"Cassetta DMX A",q:10},{c:code(),n:"Cassetta DMX B",q:8}],loose:2,loc:"Sotto il bancone",state:"ok",owner:"nostro"},
+  {id:"g8",name:"Truss quadrata 2 m",cat:"strutture",track:"bulk",cases:[],loose:6,state:"ok",owner:"prestito",from:"Service esempio",returnBy:dd(-1)}];
+ S.gear=G;
+ S.events=S.events.filter(e=>e.id!=="ex1");
+ if(!S.events.some(e=>daysTo(e.date)>=0)){
+  const c=G[0].units.slice(0,5).map(u=>u.c).concat([G[2].units[0].c,G[7].cases[0].c]);
+  S.events.push({id:"ex1",title:"Esempio · Concerto in piazza",cat:"ld",date:dd(3),dep:"12:00",loadin:"14:00",show:"21:00",place:"Parma",client:"Service esempio",status:"ok",staff:(S.staff||[]).slice(0,2).map(m=>m.name),pay:350,notes:"",
+   gear:[{g:"g1",q:8},{g:"g4",q:1},{g:"g5",q:1},{g:"g7",q:12},{g:"g3",q:1}],chk:{load:{c,m:{}},back:{c:[],m:{}}}});
+ }
+}
+if(PREVIEW&&(!Array.isArray(S.gear)||!S.gear.length||S.gear.some(g=>/^g\d$/.test(g.id)&&!g.track)))seedGear();
+if(!Array.isArray(S.gear))S.gear=[];
+
+/* --- modello: pezzi singoli con QR, oppure quantità in cassette con QR --- */
+function normG(g){
+ if(!g.track){g.track="bulk";g.loose=+g.qty||0}
+ g.units=Array.isArray(g.units)?g.units:[];g.cases=Array.isArray(g.cases)?g.cases:[];g.loose=+g.loose||0;
+ return g}
+const qtyOf=g=>(normG(g),g.track==="unit"?g.units.length:g.cases.reduce((t,k)=>t+(+k.q||0),0)+g.loose);
+const badOf=g=>g.track==="unit"?g.units.filter(u=>u.st&&u.st!=="ok").length:(g.state&&g.state!=="ok"?1:0);
+const gById=id=>S.gear.find(g=>g.id==id);
+function codeMap(){const m=new Map();S.gear.forEach(g=>{normG(g);g.units.forEach(u=>m.set(u.c,{g,u}));g.cases.forEach(k=>m.set(k.c,{g,k}))});return m}
+function nextCode(extra=[]){let mx=0;const see=c=>{const n=parseInt(String(c||"").replace(/\D/g,""),10);if(n>mx)mx=n};
+ S.gear.forEach(g=>{(g.units||[]).forEach(u=>see(u.c));(g.cases||[]).forEach(k=>see(k.c))});extra.forEach(see);
+ return "NX-"+String(mx+1).padStart(4,"0")}
+const parseCode=t=>{const m=String(t||"").toUpperCase().match(/NX-?(\d{1,6})/);return m?"NX-"+m[1].padStart(4,"0"):null};
+
+/* --- conteggi lista / carico / rientro --- */
+const ck=(e,mode)=>{e.chk=e.chk||{};const x=e.chk[mode]=e.chk[mode]||{};x.c=Array.isArray(x.c)?x.c:[];x.m=x.m&&typeof x.m==="object"?x.m:{};return x};
+function countOf(e,mode,gid){const x=e.chk?.[mode];if(!x)return 0;const g=gById(gid);if(!g)return 0;normG(g);
+ let n=+(x.m?.[gid])||0;const set=new Set(x.c||[]);
+ g.units.forEach(u=>{if(set.has(u.c))n++});g.cases.forEach(k=>{if(set.has(k.c))n+=+k.q||0});return n}
+const planQ=(e,gid)=>(e.gear||[]).find(x=>x.g==gid)?.q||0;
+const targetOf=(e,mode,gid)=>mode==="back"?(countOf(e,"load",gid)||planQ(e,gid)):planQ(e,gid);
+function progOf(e,mode){const L=(e.gear||[]).filter(x=>gById(x.g));let tot=0,done=0,lines=0;
+ L.forEach(x=>{const t=targetOf(e,mode,x.g),c=countOf(e,mode,x.g);tot+=t;done+=Math.min(c,t);if(c>=t&&t>0)lines++});
+ return {tot,done,lines,n:L.length}}
+const usedOn=(gid,date,exceptId)=>S.events.filter(e=>e.date===date&&e.id!=exceptId).reduce((t,e)=>t+planQ(e,gid),0);
+const outNow=gid=>S.events.reduce((t,e)=>t+Math.max(0,countOf(e,"load",gid)-countOf(e,"back",gid)),0);
+const gUpcoming=gid=>S.events.filter(e=>daysTo(e.date)>=0&&(e.gear||[]).some(x=>x.g==gid)).sort((a,b)=>a.date.localeCompare(b.date));
+const shortDate=s=>{const d=parse(s);return d.getDate()+" "+MESI[d.getMonth()].slice(0,3)};
+
+/* --- QR in SVG (generatore incorporato) --- */
+function qrSvg(text,px){let m;try{m=NXQR(text,"M")}catch(e){return ""}
+ const n=m.length,q=2,s=n+q*2;let d="";
+ for(let r=0;r<n;r++)for(let c=0;c<n;c++)if(m[r][c])d+=`M${c+q} ${r+q}h1v1h-1z`;
+ return `<svg viewBox="0 0 ${s} ${s}"${px?` width="${px}" height="${px}"`:""} shape-rendering="crispEdges" aria-hidden="true"><rect width="${s}" height="${s}" fill="#fff"/><path d="${d}" fill="#000"/></svg>`}
+const codeUrl=c=>APP_URL+"#c="+c;
+
+const gThumb=(g,cls="gico")=>g.img?`<span class="${cls} ph"><img src="${g.img}" alt=""></span>`:`<span class="${cls}" style="--c:${gcat(g.cat).c}"><svg viewBox="0 0 24 24">${gcat(g.cat).i}</svg></span>`;
+let gFilter="all",gQuery="";
+
+function gearRow(g){const c=gcat(g.cat),qt=qtyOf(g),out=outNow(g.id),av=Math.max(0,qt-out),bad=badOf(g);
+ const st=g.track==="unit"?(bad?`<span class="tag chk">${bad} da sistemare</span>`:""):(g.state&&g.state!=="ok"?`<span class="tag ${g.state}">${GSTATE[g.state]}</span>`:"");
+ const tags=[g.owner&&g.owner!=="nostro"?`<span class="tag ${g.owner}">${OWN[g.owner]}</span>`:"",st,out?`<span class="tag out">${out} fuori</span>`:""].join("");
+ const how=g.track==="unit"?`${qt} QR`:(g.cases.length?`${g.cases.length} ${g.cases.length===1?"cassetta":"cassette"}`:"sfusi");
+ return `<div class="gi" tabindex="0" data-g="${esc(g.id)}">${gThumb(g)}<div style="min-width:0"><div class="t">${esc(g.name)}</div><div class="s">${esc([how,g.loc].filter(Boolean).join(" · "))}${tags}</div></div>
+  <div class="qty">${out?`${av}<span>/${qt}</span>`:qt}<small>${out?"disponibili":"pezzi"}</small></div></div>`}
+
+function renderGear(){
+ const G=S.gear;G.forEach(normG);
+ const pieces=G.reduce((t,g)=>t+qtyOf(g),0);
+ $("#gearCount").textContent=G.length?`${G.length} articoli · ${pieces} pezzi`:"";
+ const nOut=G.reduce((t,g)=>t+outNow(g.id),0),ret=G.filter(g=>g.owner&&g.owner!=="nostro"),chk=G.filter(g=>badOf(g));
+ const card=(f,cls,lbl,v,h)=>`<button class="gs ${cls} ${gFilter===f?"on":""}" data-f="${f}"><div class="label">${lbl}</div><div class="v">${v}</div><div class="h">${h}</div></button>`;
+ $("#gsum").innerHTML=card("out","outv","Fuori",nOut,"pezzi su eventi")
+  +card("ret",ret.some(g=>g.returnBy&&daysTo(g.returnBy)<0)?"bad":"warn","Da rendere",ret.length,"noleggi e prestiti")
+  +card("chk",G.some(g=>g.track==="unit"?g.units.some(u=>u.st==="rep"||u.st==="ko"):(g.state==="rep"||g.state==="ko"))?"bad":"warn","Da sistemare",chk.reduce((t,g)=>t+badOf(g),0),"controllo o riparazione");
+ const soon=ret.filter(g=>g.returnBy&&daysTo(g.returnBy)<=7).sort((a,b)=>a.returnBy.localeCompare(b.returnBy));
+ $("#gRet").innerHTML=gFilter==="all"&&soon.length?`<div class="sec-head"><h2>Da restituire</h2><span class="label">prossimi 7 giorni</span></div><div class="list">${soon.map(g=>{const n=daysTo(g.returnBy);
+   return `<div class="ret ${n<0?"late":""}" data-g="${esc(g.id)}"><div style="min-width:0"><div class="t">${qtyOf(g)}× ${esc(g.name)}</div><div class="s">${OWN[g.owner]} da ${esc(g.from||"—")}</div></div><div class="r">${n<0?"scaduto da "+(-n)+(n===-1?" giorno":" giorni"):n===0?"oggi":n===1?"domani":"entro "+shortDate(g.returnBy)}</div></div>`}).join("")}</div>`:"";
+ const cats=GCATS.filter(c=>G.some(g=>gcat(g.cat).id===c.id));
+ $("#gchips").innerHTML=`<button data-f="all" class="${gFilter==="all"?"on":""}" style="--c:var(--fg)">Tutto</button>`+cats.map(c=>`<button data-f="${c.id}" class="${gFilter===c.id?"on":""}" style="--c:${c.c}"><i></i>${c.name}</button>`).join("");
+ const q=gQuery.toLowerCase(),code=parseCode(gQuery),cm=code?codeMap():null;
+ let list=G.filter(g=>!q||[g.name,g.brand,g.loc,g.serial,g.from].some(v=>String(v||"").toLowerCase().includes(q))||(cm&&cm.get(code)?.g===g));
+ if(gFilter==="out")list=list.filter(g=>outNow(g.id)>0);
+ else if(gFilter==="ret")list=list.filter(g=>g.owner&&g.owner!=="nostro");
+ else if(gFilter==="chk")list=list.filter(g=>badOf(g));
+ else if(gFilter!=="all")list=list.filter(g=>gcat(g.cat).id===gFilter);
+ const groups=GCATS.map(c=>[c,list.filter(g=>gcat(g.cat).id===c.id).sort((a,b)=>a.name.localeCompare(b.name))]).filter(([,a])=>a.length);
+ $("#gList").innerHTML=groups.map(([c,a])=>`<div class="gcat" style="--c:${c.c}"><b>${c.name}</b><span class="label">${a.reduce((t,g)=>t+qtyOf(g),0)} pz</span></div><div class="list">${a.map(gearRow).join("")}</div>`).join("")
+  ||`<div class="empty" style="margin-top:16px">${G.length?"Nessun materiale corrisponde.":"Il magazzino è vuoto. Aggiungi il primo materiale con il pulsante qui sotto."}</div>`;
+ $("#gDemo").hidden=!(PREVIEW&&G.some(g=>/^g\d$/.test(g.id)));
+}
+$("#gsum").onclick=e=>{const b=e.target.closest("[data-f]");if(!b)return;gFilter=gFilter===b.dataset.f?"all":b.dataset.f;renderGear()};
+$("#gchips").onclick=e=>{const b=e.target.closest("[data-f]");if(!b)return;gFilter=b.dataset.f;renderGear()};
+$("#gq").oninput=e=>{gQuery=e.target.value.trim();renderGear()};
+$("#gList").addEventListener("click",e=>{const r=e.target.closest("[data-g]");if(r)openGear(r.dataset.g)});
+$("#gRet").addEventListener("click",e=>{const r=e.target.closest("[data-g]");if(r)openGear(r.dataset.g)});
+$("#gList").addEventListener("keydown",e=>{const r=e.target.closest(".gi");if(r&&(e.key==="Enter"||e.key===" ")){e.preventDefault();openGear(r.dataset.g)}});
+$("#gAdd").onclick=()=>openGear(null);
+$("#gLabels").onclick=()=>openLabels(null);
+$("#gScan").onclick=()=>openScanner({mode:"find"});
+
+/* --- foto: PNG con trasparenza, ridimensionata per stare leggera nel database --- */
+function readPhoto(file){return new Promise((res,rej)=>{const r=new FileReader();r.onerror=rej;r.onload=()=>{const im=new Image();im.onerror=rej;im.onload=()=>{
+  const enc=max=>{const k=Math.min(1,max/Math.max(im.width,im.height)),cv=document.createElement("canvas");cv.width=Math.round(im.width*k);cv.height=Math.round(im.height*k);
+   cv.getContext("2d").drawImage(im,0,0,cv.width,cv.height);let u=cv.toDataURL("image/webp",.86);if(!u.startsWith("data:image/webp"))u=cv.toDataURL("image/png");return u};
+  let u=enc(480);if(u.length>260000)u=enc(340);if(u.length>260000)u=enc(240);res(u)};im.src=r.result};r.readAsDataURL(file)})}
+
+/* --- scheda materiale --- */
+let draft=null;
+function openGear(id,focusCode){const g=id?gById(id):null;if(g)normG(g);
+ draft=g?clone(g):{id:null,name:"",cat:GCATS.some(c=>c.id===gFilter)?gFilter:"luci",track:"unit",units:[],cases:[],loose:0,state:"ok",owner:"nostro"};
+ if(!g)draft.units=[{c:nextCode(),n:"#1",st:"ok"}];
+ const evs=g?gUpcoming(g.id):[];
+ const notes=g?S.events.flatMap(e=>(e.notesGear||[]).filter(x=>x.g==g.id).map(x=>({e,n:x.t,c:x.c}))).slice(-4):[];
+ const v=draft;
+ $("#sheetCard").innerHTML=`<div class="sheet-head"><h2>${g?esc(g.name):"Nuovo materiale"}</h2><button class="x" id="gx" aria-label="Chiudi">×</button></div>
+ <div class="gtop"><div class="gphoto" id="gphoto"></div><div class="gphoto-act"><label class="btn ghost" for="g-img" style="padding:11px;text-align:center">${v.img?"Cambia foto":"Aggiungi foto"}</label><input id="g-img" type="file" accept="image/png,image/webp,image/jpeg,image/*" hidden>
+  <button class="linkbtn" id="g-imgdel" ${v.img?"":"hidden"}>Rimuovi foto</button><div class="label" style="text-transform:none;letter-spacing:0;line-height:1.4">Meglio un PNG già scontornato: lo sfondo trasparente resta.</div></div></div>
+ <div class="field"><label class="l" for="g-name">Nome</label><input id="g-name" value="${esc(v.name)}" placeholder="Es. Testa mobile spot"></div>
+ <div class="field"><span class="l">Categoria</span><div class="cats">${GCATS.map(c=>`<input type="radio" name="gcat" id="gc-${c.id}" value="${c.id}" ${gcat(v.cat).id===c.id?"checked":""}><label for="gc-${c.id}" style="--c:${c.c}"><i></i>${c.name}</label>`).join("")}</div></div>
+ <div class="field"><span class="l">Come lo gestisci</span><div class="seg two"><button type="button" data-track="unit" class="${v.track==="unit"?"on":""}">Pezzo per pezzo<small>un QR per ogni pezzo</small></button><button type="button" data-track="bulk" class="${v.track==="bulk"?"on":""}">A quantità<small>un QR per cassetta</small></button></div></div>
+ <div id="g-track"></div>
+ <div class="row"><div class="field"><label class="l" for="g-brand">Marca e modello</label><input id="g-brand" value="${esc(v.brand)}" placeholder="Facoltativo"></div>
+  <div class="field"><label class="l" for="g-loc">Dove si trova</label><input id="g-loc" value="${esc(v.loc)}" placeholder="Es. Scaffale A"></div></div>
+ <div class="field"><label class="l" for="g-owner">Proprietà</label><select id="g-owner">${Object.entries(OWN).map(([k,l])=>`<option value="${k}" ${v.owner===k?"selected":""}>${l}</option>`).join("")}</select></div>
+ <div class="row" id="g-ownrow"><div class="field"><label class="l" for="g-from">Da chi</label><input id="g-from" value="${esc(v.from)}" placeholder="Es. nome del service"></div>
+  <div class="field"><label class="l" for="g-ret">Restituire entro</label><input id="g-ret" type="date" value="${esc(v.returnBy)}"></div></div>
+ <div class="field"><label class="l" for="g-notes">Note</label><textarea id="g-notes" placeholder="Accessori, attenzioni, lampada…">${esc(v.notes)}</textarea></div>
+ ${notes.length?`<div class="label">Segnalazioni dai rientri</div><div class="list">${notes.map(x=>`<div class="ret" style="cursor:default"><div><div class="t">${esc(x.n)}</div><div class="s">${x.c?esc(x.c)+" · ":""}${esc(x.e.title)} · ${shortDate(x.e.date)}</div></div></div>`).join("")}</div>`:""}
+ ${g?`<div class="label" style="margin-top:4px">Prossimi eventi</div>${evs.length?`<div class="list">${evs.map(e=>evRow(e).replace('<div class="r">',`<div class="r"><b style="color:var(--fg)">${planQ(e,g.id)}×</b><br>`)).join("")}</div>`:`<div class="empty">Non è in nessuna lista di un evento in programma.</div>`}`:""}
+ <div style="display:flex;gap:10px;flex-wrap:wrap">${g?`<button class="btn ghost" id="gDel" style="flex:1">Elimina</button>`:""}<button class="btn" id="gSave" style="flex:2">${g?"Salva":"Aggiungi al magazzino"}</button></div>`;
+ const photo=()=>{$("#gphoto").innerHTML=draft.img?`<img src="${draft.img}" alt="Foto di ${esc(draft.name)}">`:`<span style="--c:${gcat(draft.cat).c};color:var(--c)"><svg viewBox="0 0 24 24">${gcat(draft.cat).i}</svg></span>`;$("#g-imgdel").hidden=!draft.img};
+ photo();
+ $("#g-img").onchange=async ev=>{const f=ev.target.files[0];if(!f)return;try{draft.img=await readPhoto(f);photo();toast("Foto pronta: ricordati di salvare")}catch(_){toast("Non riesco a leggere questa immagine")}ev.target.value=""};
+ $("#g-imgdel").onclick=()=>{delete draft.img;photo()};
+ document.querySelectorAll("[name=gcat]").forEach(r=>r.onchange=()=>{draft.cat=r.value;photo()});
+ document.querySelectorAll("[data-track]").forEach(b=>b.onclick=()=>{draft.track=b.dataset.track;document.querySelectorAll("[data-track]").forEach(x=>x.classList.toggle("on",x===b));
+  if(draft.track==="unit"&&!draft.units.length)draft.units=[{c:nextCode(),n:"#1",st:"ok"}];renderTrack()});
+ const own=()=>{$("#g-ownrow").hidden=$("#g-owner").value==="nostro"};own();$("#g-owner").onchange=own;
+ renderTrack(focusCode);
+ $("#sheet").hidden=false;$("#sheetCard").scrollTop=0;
+ if(focusCode){const el=document.querySelector(`[data-code="${focusCode}"]`);if(el){el.classList.add("hit");setTimeout(()=>el.scrollIntoView({block:"center"}),60)}}
+ $("#gx").onclick=()=>$("#sheet").hidden=true;
+ $("#gSave").onclick=()=>{const name=$("#g-name").value.trim();if(!name){$("#g-name").focus();toast("Scrivi il nome del materiale");return}
+  const ow=$("#g-owner").value;
+  Object.assign(draft,{name,cat:document.querySelector("[name=gcat]:checked")?.value||"varie",brand:$("#g-brand").value.trim(),loc:$("#g-loc").value.trim(),owner:ow,from:ow==="nostro"?"":$("#g-from").value.trim(),returnBy:ow==="nostro"?"":$("#g-ret").value,notes:$("#g-notes").value.trim()});
+  if(draft.track==="unit"){draft.cases=[];draft.loose=0}else draft.units=[];
+  delete draft.qty;
+  if(g){const i=S.gear.indexOf(g);S.gear[i]=draft}else{draft.id="g"+Date.now();S.gear.push(draft)}
+  save();$("#sheet").hidden=true;renderAll();toast(g?"Materiale salvato":name+" aggiunto al magazzino")};
+ if(g)$("#gDel").onclick=function(){if(this.dataset.c){S.gear=S.gear.filter(x=>x.id!=g.id);S.events.forEach(e=>{if(e.gear)e.gear=e.gear.filter(x=>x.g!=g.id)});save();$("#sheet").hidden=true;renderAll();toast("Materiale eliminato")}else{this.dataset.c=1;this.textContent="Tocca per confermare"}};
+}
+function renderTrack(){const v=draft,box=$("#g-track");
+ const allCodes=()=>v.units.map(u=>u.c).concat(v.cases.map(k=>k.c));
+ if(v.track==="unit"){
+  box.innerHTML=`<div class="label" style="margin-bottom:8px">${v.units.length} ${v.units.length===1?"pezzo":"pezzi"} · ognuno con il suo QR</div>
+   <div class="units">${v.units.map((u,i)=>`<div class="unit" data-code="${esc(u.c)}"><span class="code">${esc(u.c)}</span><input data-un="${i}" value="${esc(u.n)}" aria-label="Nome del pezzo ${esc(u.c)}" placeholder="#${i+1}">
+    <select data-us="${i}" aria-label="Stato di ${esc(u.c)}">${Object.entries(GSTATE).map(([k,l])=>`<option value="${k}" ${(u.st||"ok")===k?"selected":""}>${l}</option>`).join("")}</select><button class="x" data-ud="${i}" aria-label="Togli ${esc(u.c)}">×</button></div>`).join("")}</div>
+   <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="btn ghost" data-uadd="1" style="flex:1;padding:12px">+1 pezzo</button><button class="btn ghost" data-uadd="5" style="flex:1;padding:12px">+5 pezzi</button>${v.units.length?`<button class="btn ghost" id="g-lab" style="flex:1;padding:12px">Etichette QR</button>`:""}</div>`;
+ }else{
+  box.innerHTML=`<div class="label" style="margin-bottom:8px">${qtyOf(v)} pezzi in totale</div>
+   <div class="units">${v.cases.map((k,i)=>`<div class="unit case" data-code="${esc(k.c)}"><span class="code">${esc(k.c)}</span><input data-kn="${i}" value="${esc(k.n)}" aria-label="Nome della cassetta" placeholder="Cassetta ${String.fromCharCode(65+i)}">
+    <div class="step sm"><button data-kq="${i}" data-d="-1" aria-label="Meno">−</button><b>${+k.q||0}</b><button data-kq="${i}" data-d="1" aria-label="Più">+</button></div><button class="x" data-kd="${i}" aria-label="Togli cassetta">×</button></div>`).join("")}
+    <div class="unit case loose"><span class="code">—</span><span style="font-weight:600;font-size:14px">Sfusi, senza codice</span><div class="step sm"><button data-lq="-1" aria-label="Meno">−</button><b>${v.loose}</b><button data-lq="1" aria-label="Più">+</button></div><span></span></div></div>
+   <div class="row" style="margin-top:10px"><div class="field"><label class="l" for="g-state">Stato</label><select id="g-state">${Object.entries(GSTATE).map(([k,l])=>`<option value="${k}" ${(v.state||"ok")===k?"selected":""}>${l}</option>`).join("")}</select></div>
+    <div class="field"><span class="l">&nbsp;</span><button class="btn ghost" id="g-kadd" style="padding:12px">+ Cassetta</button></div></div>
+   ${v.cases.length?`<button class="btn ghost" id="g-lab" style="padding:12px;margin-top:8px;width:100%">Etichette QR delle cassette</button>`:""}`;
+  const st=$("#g-state");if(st)st.onchange=()=>v.state=st.value;
+ }
+ box.querySelectorAll("[data-un]").forEach(x=>x.oninput=()=>v.units[+x.dataset.un].n=x.value);
+ box.querySelectorAll("[data-us]").forEach(x=>x.onchange=()=>v.units[+x.dataset.us].st=x.value);
+ box.querySelectorAll("[data-ud]").forEach(x=>x.onclick=()=>{v.units.splice(+x.dataset.ud,1);renderTrack()});
+ box.querySelectorAll("[data-uadd]").forEach(x=>x.onclick=()=>{for(let i=0;i<+x.dataset.uadd;i++)v.units.push({c:nextCode(allCodes()),n:"#"+(v.units.length+1),st:"ok"});renderTrack()});
+ box.querySelectorAll("[data-kn]").forEach(x=>x.oninput=()=>v.cases[+x.dataset.kn].n=x.value);
+ box.querySelectorAll("[data-kq]").forEach(x=>x.onclick=()=>{const k=v.cases[+x.dataset.kq];k.q=Math.max(0,(+k.q||0)+(+x.dataset.d));renderTrack()});
+ box.querySelectorAll("[data-kd]").forEach(x=>x.onclick=()=>{v.cases.splice(+x.dataset.kd,1);renderTrack()});
+ box.querySelectorAll("[data-lq]").forEach(x=>x.onclick=()=>{v.loose=Math.max(0,v.loose+(+x.dataset.lq));renderTrack()});
+ const ka=$("#g-kadd");if(ka)ka.onclick=()=>{v.cases.push({c:nextCode(allCodes()),n:"Cassetta "+String.fromCharCode(65+v.cases.length),q:10});renderTrack()};
+ const lb=$("#g-lab");if(lb)lb.onclick=()=>{v.name=$("#g-name").value.trim()||v.name||"Senza nome";openLabels([v])};
+}
+
+/* --- etichette QR da stampare --- */
+let labSel="all";
+function openLabels(only){const box=$("#labels");
+ const draw=()=>{const src=only||S.gear.filter(g=>labSel==="all"||gcat(g.cat).id===labSel);
+  const items=src.flatMap(g=>{normG(g);return g.track==="unit"?g.units.map(u=>({g,c:u.c,sub:u.n})):g.cases.map(k=>({g,c:k.c,sub:`${k.n} · ${k.q} pz`}))});
+  box.innerHTML=`<div class="lab-bar noprint"><div><h2>Etichette QR</h2><div class="label" style="margin-top:4px">${items.length} etichette · foglio A4, 3 colonne (70×37 mm)</div></div><button class="x" id="lab-x" aria-label="Chiudi">×</button></div>
+   ${only?"":`<div class="fchips noprint"><button data-ls="all" class="${labSel==="all"?"on":""}" style="--c:var(--fg)">Tutto</button>${GCATS.filter(c=>S.gear.some(g=>gcat(g.cat).id===c.id)).map(c=>`<button data-ls="${c.id}" class="${labSel===c.id?"on":""}" style="--c:${c.c}"><i></i>${c.name}</button>`).join("")}</div>`}
+   <div class="lab-sheet">${items.map(x=>`<div class="lab">${qrSvg(codeUrl(x.c))}<div class="lab-t"><div class="lab-b">NEXUS</div><div class="lab-n">${esc(x.g.name)}</div><div class="lab-s">${esc(x.sub||"")}</div><div class="lab-c">${esc(x.c)}</div></div></div>`).join("")||`<div class="empty">Nessun codice da stampare.</div>`}</div>
+   <div class="lab-foot noprint"><button class="btn" id="lab-print">Stampa</button><div class="label" style="text-transform:none;letter-spacing:0;line-height:1.5">Dal telefono puoi stampare o salvare in PDF. Se un'etichetta si rovina, ristampala: il codice resta lo stesso.</div></div>`;
+  box.hidden=false;document.body.classList.add("printing-labels");
+  $("#lab-x").onclick=()=>{box.hidden=true;document.body.classList.remove("printing-labels")};
+  $("#lab-print").onclick=()=>{try{window.print()}catch(_){}};
+  box.querySelectorAll("[data-ls]").forEach(b=>b.onclick=()=>{labSel=b.dataset.ls;draw()});
+ };draw();
+}
+
+/* --- riquadro materiale nella scheda evento --- */
+function gearBox(e){const L=(e.gear||[]).filter(x=>gById(x.g));
+ if(!L.length)return `<div class="gbox"><div class="label">Materiale</div><div style="font-size:13px;color:var(--muted)">Nessuna lista per questo evento.</div><button class="btn ghost" data-evgear="lista">Prepara la lista</button></div>`;
+ const pz=L.reduce((t,x)=>t+x.q,0),a=progOf(e,"load"),b=progOf(e,"back"),conf=L.filter(x=>x.q>qtyOf(gById(x.g))-usedOn(x.g,e.date,e.id)).length;
+ const bar=(d,t)=>`<div class="bar"><span style="width:${t?d/t*100:0}%"></span></div>`;
+ return `<div class="gbox"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><div class="label">Materiale · ${L.length} voci · ${pz} pz</div>${conf?`<span class="tag late">${conf} in conflitto</span>`:""}</div>
+  <div class="row2"><div class="mini">Caricato <b>${a.done}/${a.tot}</b>${bar(a.done,a.tot)}</div><div class="mini">Rientrato <b>${b.done}/${b.tot}</b>${bar(b.done,b.tot)}</div></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" style="flex:1;padding:12px" data-evgear="lista">Lista</button><button class="btn ghost" style="flex:1;padding:12px" data-evgear="load">Carico</button><button class="btn ghost" style="flex:1;padding:12px" data-evgear="back">Rientro</button></div></div>`}
+
+/* --- lista dell'evento e verifica di carico/rientro --- */
+let egQ="",egOpen=new Set(),egCur=null;
+function openEvGear(id,mode){const e=S.events.find(x=>x.id==id);if(!e)return;if(!e.gear)e.gear=[];egCur={id,mode};
+ const card=$("#sheetCard"),keep=card.scrollTop,d=parse(e.date);
+ e.gear=e.gear.filter(x=>gById(x.g));const L=e.gear,pl=progOf(e,"load"),pb=progOf(e,"back");
+ let body="";
+ if(mode==="lista"){
+  const q=egQ.toLowerCase();
+  const G=S.gear.filter(g=>!q||[g.name,g.brand,g.loc].some(v=>String(v||"").toLowerCase().includes(q)));
+  body=`<div style="display:flex;gap:8px"><input id="eg-q" type="search" placeholder="Cerca nel magazzino…" value="${esc(egQ)}" aria-label="Cerca nel magazzino" autocomplete="off" style="flex:1"><button class="btn scanbtn" id="eg-scan" aria-label="Scansiona per aggiungere">${SCAN_ICO}</button></div>
+   <div class="label" style="text-transform:none;letter-spacing:0;margin-top:8px">Aggiungi a mano con + e −, oppure scansiona i QR: ogni pezzo o cassetta letta entra nella lista.</div>`+
+   (S.gear.length?GCATS.map(c=>{const a=G.filter(g=>gcat(g.cat).id===c.id).sort((x,y)=>x.name.localeCompare(y.name));if(!a.length)return "";
+    return `<div class="gh" style="--c:${c.c}">${c.name}</div>`+a.map(g=>{const q=planQ(e,g.id),qt=qtyOf(g),busy=usedOn(g.id,e.date,e.id),av=qt-busy,conf=q>av,bad=badOf(g);
+     return `<div class="pick ${q?"sel":""} ${conf?"conf":""}">${gThumb(g,"gico sm")}<div style="min-width:0"><div class="t">${esc(g.name)}</div><div class="s">${conf?`Conflitto: ${busy} già su altri eventi quel giorno, ne restano ${Math.max(0,av)}`:`${Math.max(0,av)} di ${qt} liberi quel giorno`}${bad?` · ${bad} da sistemare`:""}</div></div>
+      <div class="step"><button data-dq="-1" data-g="${esc(g.id)}" aria-label="Togli ${esc(g.name)}">−</button><b>${q}</b><button data-dq="1" data-g="${esc(g.id)}" aria-label="Aggiungi ${esc(g.name)}">+</button></div></div>`}).join("")}).join(""):`<div class="empty" style="margin-top:12px">Il magazzino è vuoto. Aggiungi prima il materiale dalla scheda Magazzino.</div>`);
+ }else{
+  const P=mode==="load"?pl:pb,x=ck(e,mode),cm=codeMap();
+  const rows=L.map(it=>{const g=gById(it.g);return {g,t:targetOf(e,mode,g.id),c:countOf(e,mode,g.id)}}).sort((a,b)=>(a.c>=a.t)-(b.c>=b.t)||GCATS.indexOf(gcat(a.g.cat))-GCATS.indexOf(gcat(b.g.cat))||a.g.name.localeCompare(b.g.name));
+  const extra=x.c.map(c=>cm.get(c)).filter(r=>r&&!L.some(it=>it.g==r.g.id));
+  const loadSet=new Set(ck(e,"load").c),set=new Set(x.c);
+  body=L.length?`<div class="vsum ${P.done>=P.tot&&P.tot?"ok":""}"><div><div class="label">${mode==="load"?"Caricati":"Rientrati"}</div><div class="v">${P.done}<span>/${P.tot} pz</span></div><div class="label" style="text-transform:none;letter-spacing:0">${P.lines} di ${P.n} voci complete${mode==="back"?" · si conta ciò che è stato caricato":""}</div></div>
+     <button class="btn scanbig" id="eg-scan">${SCAN_ICO}Scansiona</button></div><div class="bar" style="margin:-2px 0 4px"><span style="width:${P.tot?P.done/P.tot*100:0}%"></span></div>`+
+   rows.map(({g,t,c})=>{const open=egOpen.has(g.id),st=c>=t&&t>0?"ok":c>0?"part":"";
+    let det="";
+    if(open){
+     const chips=g.track==="unit"?g.units.map(u=>{const on=set.has(u.c),miss=mode==="back"&&loadSet.has(u.c)&&!on;return `<button class="uchip ${on?"on":""} ${miss?"miss":""}" data-tog="${esc(u.c)}">${esc(u.n||u.c)}<small>${esc(u.c)}</small></button>`}).join("")
+      :g.cases.map(k=>{const on=set.has(k.c),miss=mode==="back"&&loadSet.has(k.c)&&!on;return `<button class="uchip ${on?"on":""} ${miss?"miss":""}" data-tog="${esc(k.c)}">${esc(k.n)} · ${+k.q||0}<small>${esc(k.c)}</small></button>`}).join("");
+     det=`<div class="vdet">${chips?`<div class="label" style="text-transform:none;letter-spacing:0">Tocca un codice per segnarlo a mano se l'etichetta non si legge${mode==="back"?" · in rosso: caricato ma non ancora rientrato":""}</div><div class="uchips">${chips}</div>`:""}
+      <div class="vman"><span>${g.track==="unit"?"Pezzi senza codice":"Sfusi o senza codice"}</span><div class="step sm"><button data-man="${esc(g.id)}" data-d="-1" aria-label="Meno">−</button><b>${+x.m[g.id]||0}</b><button data-man="${esc(g.id)}" data-d="1" aria-label="Più">+</button></div></div>
+      ${mode==="back"?`<input class="chk-note" data-note="${esc(g.id)}" placeholder="Segnala un problema (es. ${g.track==="unit"?"#3 lente rigata":"un cavo rotto"})" aria-label="Segnala un problema per ${esc(g.name)}">`:""}</div>`}
+    return `<div class="vr ${st} ${open?"open":""}"><button class="vhead" data-open="${esc(g.id)}" aria-expanded="${open}">${gThumb(g,"gico sm")}<div style="min-width:0;text-align:left"><div class="t">${esc(g.name)}</div><div class="s">${g.track==="unit"?"pezzi con QR":g.cases.length?"cassette con QR":"senza codice"}${c>t?` · ${c-t} in più`:""}</div></div><div class="vq">${Math.min(c,99)}<span>/${t}</span></div></button>
+     <div class="bar thin"><span style="width:${t?Math.min(1,c/t)*100:0}%"></span></div>${det}</div>`}).join("")+
+   (extra.length?`<div class="gh" style="--c:var(--amber)">Scansionati ma non in lista</div>`+extra.map(r=>`<div class="pick two"><div style="min-width:0"><div class="t">${esc(r.g.name)} ${esc(r.u?.n||r.k?.n||"")}</div><div class="s">${esc((r.u||r.k).c)}</div></div><div style="display:flex;gap:6px"><button class="btn ghost" style="padding:9px 12px;font-size:12px" data-addx="${esc(r.g.id)}">In lista</button><button class="x" data-rmx="${esc((r.u||r.k).c)}" aria-label="Togli">×</button></div></div>`).join(""):"")
+   :`<div class="empty">La lista è vuota. Preparala dalla scheda Lista.</div>`;
+ }
+ card.innerHTML=`<div class="sheet-head"><div><div class="label">Materiale · ${GG[d.getDay()]} ${d.getDate()} ${MESI[d.getMonth()]}</div><h2 style="margin-top:4px">${esc(e.title)}</h2></div><button class="x" id="eg-x" aria-label="Chiudi">×</button></div>
+  <div class="seg"><button data-m="lista" class="${mode==="lista"?"on":""}">Lista<em>${L.length}</em></button><button data-m="load" class="${mode==="load"?"on":""}">Carico<em>${pl.done}/${pl.tot}</em></button><button data-m="back" class="${mode==="back"?"on":""}">Rientro<em>${pb.done}/${pb.tot}</em></button></div>
+  <div>${body}</div>
+  <button class="btn ghost" id="eg-back">Torna all'evento</button>`;
+ $("#sheet").hidden=false;card.scrollTop=keep;
+ card.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{card.scrollTop=0;openEvGear(id,b.dataset.m)});
+ $("#eg-x").onclick=()=>{$("#sheet").hidden=true;egCur=null;renderAll()};
+ $("#eg-back").onclick=()=>{egCur=null;renderAll();openEv(id)};
+ const sc=$("#eg-scan");if(sc)sc.onclick=()=>openScanner({mode:mode==="lista"?"add":mode,eventId:id});
+ const qi=$("#eg-q");if(qi)qi.oninput=ev=>{egQ=ev.target.value;const pos=ev.target.selectionStart;openEvGear(id,"lista");const n=$("#eg-q");n.focus();try{n.setSelectionRange(pos,pos)}catch(_){}};
+ card.querySelectorAll("[data-dq]").forEach(b=>b.onclick=()=>{const gid=b.dataset.g,dq=+b.dataset.dq,g=gById(gid);let it=e.gear.find(y=>y.g==gid);
+  if(!it){if(dq<0)return;it={g:gid,q:0};e.gear.push(it)}
+  it.q=Math.max(0,it.q+dq);if(!it.q)e.gear=e.gear.filter(y=>y!==it);
+  if(dq>0&&g&&it.q>qtyOf(g)-usedOn(gid,e.date,e.id))toast("Attenzione: "+g.name+" non basta per quel giorno");
+  save();openEvGear(id,"lista")});
+ card.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>{const k=b.dataset.open;egOpen.has(k)?egOpen.delete(k):egOpen.add(k);openEvGear(id,mode)});
+ if(mode!=="lista"){const x=ck(e,mode);
+  card.querySelectorAll("[data-tog]").forEach(b=>b.onclick=()=>{const c=b.dataset.tog,i=x.c.indexOf(c);i>-1?x.c.splice(i,1):x.c.push(c);save();openEvGear(id,mode)});
+  card.querySelectorAll("[data-man]").forEach(b=>b.onclick=()=>{const k=b.dataset.man;x.m[k]=Math.max(0,(+x.m[k]||0)+(+b.dataset.d));if(!x.m[k])delete x.m[k];save();openEvGear(id,mode)});
+  card.querySelectorAll("[data-note]").forEach(inp=>inp.onchange=()=>{const t=inp.value.trim();if(!t)return;e.notesGear=e.notesGear||[];e.notesGear.push({g:inp.dataset.note,t});save();inp.value="";toast("Segnalazione salvata nella scheda del materiale")});
+  card.querySelectorAll("[data-addx]").forEach(b=>b.onclick=()=>{const gid=b.dataset.addx;let it=e.gear.find(y=>y.g==gid);if(!it){it={g:gid,q:0};e.gear.push(it)}it.q=Math.max(it.q,countOf(e,mode,gid));save();openEvGear(id,mode)});
+  card.querySelectorAll("[data-rmx]").forEach(b=>b.onclick=()=>{x.c=x.c.filter(c=>c!==b.dataset.rmx);e.chk[mode]=x;save();openEvGear(id,mode)});
+ }
+}
+
+/* --- scanner: fotocamera + inserimento manuale del codice --- */
+const SC={stream:null,timer:null,det:null,last:"",lastT:0,session:new Set(),opts:null,log:[]};
+function beep(ok){try{const a=SC.ac||(SC.ac=new (window.AudioContext||window.webkitAudioContext)());const o=a.createOscillator(),gn=a.createGain();o.frequency.value=ok?1320:330;gn.gain.value=.08;o.connect(gn);gn.connect(a.destination);o.start();o.stop(a.currentTime+(ok?.08:.25))}catch(_){}
+ try{navigator.vibrate&&navigator.vibrate(ok?40:[60,40,60])}catch(_){}}
+function openScanner(opts){SC.opts=opts;SC.session=new Set();SC.log=[];const box=$("#scanner");
+ const titles={find:"Cerca con il QR",add:"Aggiungi alla lista",load:"Verifica carico",back:"Verifica rientro"};
+ const ev=opts.eventId?S.events.find(x=>x.id==opts.eventId):null;
+ box.innerHTML=`<div class="sc-head"><div><div class="label">${ev?esc(ev.title):"Magazzino"}</div><h2>${titles[opts.mode]}</h2></div><button class="x" id="sc-x" aria-label="Chiudi">×</button></div>
+  <div class="sc-video"><video id="sc-v" playsinline muted></video><div class="sc-frame"></div><div class="sc-msg" id="sc-msg">Avvio fotocamera…</div></div>
+  <div class="sc-res" id="sc-res"><div class="label">Inquadra un'etichetta NEXUS</div></div>
+  <form class="sc-man" id="sc-form" autocomplete="off"><input id="sc-code" placeholder="Oppure scrivi il codice, es. NX-0012" inputmode="text" autocapitalize="characters" aria-label="Codice da inserire a mano"><button class="btn" type="submit">OK</button></form>
+  ${PREVIEW?`<div class="sc-demo"><div class="label">Anteprima: tocca un codice per provare</div><div class="uchips">${S.gear.flatMap(g=>(normG(g),g.units.slice(0,3).map(u=>u.c).concat(g.cases.map(k=>k.c)))).slice(0,12).map(c=>`<button class="uchip" data-sim="${c}">${c}</button>`).join("")}</div></div>`:""}
+  <div class="sc-log" id="sc-log"></div>
+  <button class="btn ghost" id="sc-done">Fine</button>`;
+ box.hidden=false;
+ $("#sc-x").onclick=$("#sc-done").onclick=closeScanner;
+ $("#sc-form").onsubmit=e=>{e.preventDefault();const v=$("#sc-code").value;$("#sc-code").value="";handleScan(v,true)};
+ box.querySelectorAll("[data-sim]").forEach(b=>b.onclick=()=>handleScan(b.dataset.sim,true));
+ startCam();
+}
+async function startCam(){const msg=$("#sc-msg"),v=$("#sc-v");
+ try{
+  if(!navigator.mediaDevices?.getUserMedia)throw new Error("nocam");
+  SC.stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment",width:{ideal:1280}},audio:false});
+  v.srcObject=SC.stream;await v.play();msg.hidden=true;
+  if("BarcodeDetector" in window){try{const f=await BarcodeDetector.getSupportedFormats();if(f.includes("qr_code"))SC.det=new BarcodeDetector({formats:["qr_code"]})}catch(_){}}
+  if(!SC.det&&!window.jsQR){await new Promise((res,rej)=>{const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js";s.onload=res;s.onerror=rej;document.head.appendChild(s)})}
+  const cv=document.createElement("canvas"),cx=cv.getContext("2d",{willReadFrequently:true});
+  const loop=async()=>{if(!SC.stream)return;
+   try{if(v.readyState>=2){
+    if(SC.det){const r=await SC.det.detect(v);if(r[0])handleScan(r[0].rawValue)}
+    else if(window.jsQR){const w=480,h=Math.round(v.videoHeight/v.videoWidth*w)||360;cv.width=w;cv.height=h;cx.drawImage(v,0,0,w,h);const r=jsQR(cx.getImageData(0,0,w,h).data,w,h,{inversionAttempts:"dontInvert"});if(r)handleScan(r.data)}
+   }}catch(_){}
+   SC.timer=setTimeout(loop,180)};loop();
+ }catch(err){msg.hidden=false;msg.textContent="Fotocamera non disponibile qui. Scrivi il codice qui sotto o usa la lista manuale.";}
+}
+function closeScanner(){if(SC.stream){SC.stream.getTracks().forEach(t=>t.stop());SC.stream=null}clearTimeout(SC.timer);$("#scanner").hidden=true;
+ const o=SC.opts;if(o&&o.eventId&&egCur){openEvGear(o.eventId,egCur.mode)}renderAll()}
+function scanFeedback(kind,title,sub){const r=$("#sc-res");r.className="sc-res "+kind;r.innerHTML=`<div class="t">${title}</div>${sub?`<div class="s">${sub}</div>`:""}`;
+ SC.log.unshift({kind,title});SC.log=SC.log.slice(0,6);$("#sc-log").innerHTML=SC.log.map(l=>`<div class="${l.kind}">${l.title}</div>`).join("");beep(kind==="ok")}
+function handleScan(raw,manual){const code=parseCode(raw);const now=Date.now();
+ if(!manual&&code===SC.last&&now-SC.lastT<2500)return;SC.last=code;SC.lastT=now;
+ if(!code){scanFeedback("bad","Codice non riconosciuto","Non sembra un'etichetta NEXUS");return}
+ const hit=codeMap().get(code);
+ if(!hit){scanFeedback("bad",esc(code)+" non esiste","Nessun materiale ha questo codice");return}
+ const {g,u,k}=hit,label=esc(g.name)+" "+esc(u?u.n:k.n),o=SC.opts;
+ if(o.mode==="find"){closeScanner();go("gear");openGear(g.id,code);return}
+ const e=S.events.find(x=>x.id==o.eventId);if(!e)return;
+ if(o.mode==="add"){
+  if(SC.session.has(code)){scanFeedback("warn",label,"Già aggiunto in questa scansione");return}
+  SC.session.add(code);e.gear=e.gear||[];let it=e.gear.find(x=>x.g==g.id);if(!it){it={g:g.id,q:0};e.gear.push(it)}
+  it.q+=u?1:(+k.q||0);save();scanFeedback("ok",label,`In lista: ${it.q} ${it.q===1?"pezzo":"pezzi"}`);return}
+ const x=ck(e,o.mode);
+ if(x.c.includes(code)){scanFeedback("warn",label,"Già segnato");return}
+ if(u&&u.st&&u.st!=="ok"&&o.mode==="load"){/* lo segna comunque, ma avvisa */}
+ x.c.push(code);save();
+ const t=targetOf(e,o.mode,g.id),c=countOf(e,o.mode,g.id),inList=planQ(e,g.id)>0||o.mode==="back";
+ if(!inList){scanFeedback("warn",label,"Non è nella lista di questo evento: lo trovi in fondo alla verifica");return}
+ if(o.mode==="back"&&!ck(e,"load").c.includes(code)){scanFeedback("warn",label,"Rientrato, ma non risultava caricato");return}
+ const p=progOf(e,o.mode);
+ scanFeedback(c>t?"warn":"ok",label,`${g.name}: ${c}/${t}${c>t?" · più del previsto":c===t?" · completo":""} — totale ${p.done}/${p.tot}${u&&u.st&&u.st!=="ok"?" · attenzione: "+GSTATE[u.st].toLowerCase():""}`);
+}
+
+/* --- apertura da QR letto con la fotocamera del telefono --- */
+function openFromHash(tries=0){const m=location.hash.match(/^#c=(NX-?\d+)/i);if(!m)return;const code=parseCode(m[1]),hit=codeMap().get(code);
+ if(!hit&&tries<8){setTimeout(()=>openFromHash(tries+1),700);return}
+ try{history.replaceState(null,"",location.pathname+location.search)}catch(_){}
+ if(hit){go("gear");openGear(hit.g.id,code)}else toast("Codice "+code+" non trovato nel magazzino")}
+addEventListener("hashchange",()=>openFromHash());setTimeout(()=>openFromHash(),600);
+
 function go(v){document.querySelectorAll(".view").forEach(x=>x.classList.toggle("on",x.id==="v-"+v));
  document.querySelectorAll("nav.tabs button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));window.scrollTo(0,0)}
 document.querySelectorAll("nav.tabs button").forEach(b=>b.onclick=()=>{if(b.dataset.v==="new"&&editId!==null)resetForm();go(b.dataset.v)});
 function toast(t){const el=$("#toast");el.textContent=t;el.hidden=false;clearTimeout(el._t);el._t=setTimeout(()=>el.hidden=true,1800)}
-function renderAll(){renderHome();renderCal();renderTodo();renderStaff()}
+function renderAll(){renderHome();renderCal();renderTodo();renderStaff();renderGear()}
 renderAll();
 </script>
 <script>
@@ -514,7 +2302,7 @@ const firebaseConfig={
   appId:"1:159389510874:web:64eaeb47c2f8baf01489e3"
 };
 const SDK="https://www.gstatic.com/firebasejs/10.12.2/";
-const COLS=["events","projects","staff"];
+const COLS=["events","projects","staff","gear"];
 const q=s=>document.querySelector(s);
 
 async function boot(){
@@ -574,7 +2362,9 @@ async function boot(){
       }
       if(sn.metadata.hasPendingWrites&&sn.metadata.fromCache&&!sn.docChanges().length)return;
       S[c]=arr;synced[c]=snap(c);keepLocal();renderAll();
-    },x=>{console.warn(x);toast("Accesso al database negato")})));
+    },x=>{console.warn(x);
+      if(c==="gear"){toast("Magazzino non ancora abilitato sul database");if(!ready){first[c]=[];if(Object.keys(first).length===COLS.length){ready=true;synced={};COLS.forEach(k=>{S[k]=first[k];synced[k]=snap(k)});keepLocal();renderAll()}}return}
+      toast("Accesso al database negato")})));
   });
 }
 if(location.protocol==="https:"||location.hostname==="localhost")boot().catch(e=>console.warn("Sincronizzazione non disponibile",e));
